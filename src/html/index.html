@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="leftside">
+        <div>
+            <p class="menu">유저 닉네임</p>
+            <p id="userNickname"></p>
+        </div>
+        
+        <div>
+            <p class="menu">방 이름</p>
+            <p id="roomName"></p>
+        </div>
+        
+        <div>
+            <p class="menu">역할</p>
+            <p id="Job"></p>
+            <p id="jobDescription"></p>
+        </div>
+
+        <p>copyright here</p>
+    </div>
+    <div id="middleside">
+        <div id="time">
+            <span>낮 / 밤 사이클</span>
+            <span>n일차</span>
+        </div>
+        <div id="users"></div>
+        <div id="gameLog">
+            <ul id="log"></ul>
+        </div>
+    </div>
+    <div id="rightside">
+        <ul id="chatting"></ul>
+    </div>
+
+
+    <div id="modal">
+        <input id="setNickName" type="text">
+        <input id="findRoom" type="text">
+        <button>OK</button>
+    </div>
+
+    <script src="/socket/socket.io.js"></script>
+    <script src="../javascript/client.js"></script>
+</body>
+</html>

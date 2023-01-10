@@ -1,16 +1,15 @@
 {
-  "name": "mafia",
+  "name": "obiyekt_2",
   "version": "1.0.0",
-  "description": "2명의 최씨가 만든 socket.io 를 사용한 온라인 마피아 게임이다.",
-  "main": "index.js",
+  "description": "",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "app": "nodemon .\\app.js"
   },
-  "keywords": [],
-  "author": "",
+  "author": "scvif",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2",
     "nodemon": "^2.0.20",
     "socket.io": "^4.5.4"
   }
