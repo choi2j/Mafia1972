@@ -1,0 +1,106 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+html,
+body {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+}
+
+#modal {
+    display: none;
+}
+
+#leftside {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 20%;
+    background: #222;
+    color: #fff;
+    padding: 3rem;
+}
+
+#leftside div {
+    width: 100%;
+    margin: 1rem 0;
+}
+
+.logo {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.menu {
+    font-size: 1rem;
+}
+
+#userNickname, #roomName, #Job {
+    font-size: 2rem;
+}
+
+.menu, #userNickname, #roomName, #Job, #jobDescription {
+    margin: 1rem 0;
+}
+
+.copyright {
+    color: #ddd;
+    font-weight: 300;
+    margin-top: auto;
+}
+
+#middleside {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 60%;
+    background: #333;
+}
+
+#time {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50%;
+    background: #222;
+    color: #ddd;
+}
+
+.dayNight {
+    font-size: 2rem;
+    margin: 1rem;
+}
+
+.days {
+    font-size: 1.3rem;
+    margin: 1rem;
+}
+
+.timeLimit {
+    font-size: 1.3rem;
+    margin: 1rem;
+}
+
+#users {
+    height: 100%;
+    background: #666;
+}
+
+#gameLog {
+    height: 50%;
+    background: #222;
+    color: #ddd;
+}
+
+#rightside {
+    height: 100%;
+    width: 20%;
+    background: #ddd;
+}
