@@ -4,55 +4,21 @@
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Document</title>
+		<title>Mafia 1972</title>
 		<link rel="stylesheet" href="/src/css/style.css" />
 	</head>
 	<body>
-		<div id="leftside">
-			<div>
-				<p class="logo">마피아1972</p>
-			</div>
-
-			<div>
-				<p class="menu">유저 닉네임</p>
-				<p id="userNickname">NULL</p>
-			</div>
-
-			<div>
-				<p class="menu">방 이름</p>
-				<p id="roomName">NULL</p>
-			</div>
-
-			<div>
-				<p class="menu">역할</p>
-				<p id="Job">NULL</p>
-				<p id="jobDescription">NULL</p>
-			</div>
-
-			<p class="copyright">copyright here</p>
-		</div>
-		<div id="middleside">
-			<div id="time">
-				<span class="dayNight">현재는 <b>낮</b> 입니다.</span>
-				<span class="days">n일차</span>
-				<span class="timeLimit">00 : 00</span>
-			</div>
-			<div id="users"></div>
-			<div id="gameLog">
-				<ul id="log"></ul>
+		<div class="container">
+			<div class="index">
+				<div class="wrapper">
+					<p class="text-small">choice's</p>
+					<p class="text-big">MaFia</p>
+					<div class="connect">
+						<input type="text" name="" id="" class="input" placeholder="이름 입력">
+					</div>
+					<p class="copyright">copyright here</p>
+				</div>
 			</div>
 		</div>
-		<div id="rightside">
-			<ul id="chatting"></ul>
-		</div>
-
-		<div id="modal">
-			<input id="setNickName" type="text" />
-			<input id="findRoom" type="text" />
-			<button>OK</button>
-		</div>
-
-		<script src="/socket/socket.io.js"></script>
-		<script src="../javascript/client.js"></script>
 	</body>
 </html>

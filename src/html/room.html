@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Mafia 1972</title>
+		<link rel="stylesheet" href="/src/css/style.css" />
+	</head>
+	<body>
+		<div class="container">
+			<div id="left">
+				<div class="left-cat">
+					<p class="text-small">choice's</p>
+					<p class="text-big">(로고)</p>
+				</div>
+
+				<div class="left-cat">
+					<p class="text-small">이름</p>
+					<p class="text-big" id="user-name">NULL</p>
+				</div>
+
+				<div class="left-cat">
+					<p class="text-small">역할</p>
+					<p class="text-big" id="role-name">NULL</p>
+					<p class="text-small" id="role-description">역할 설명</p>
+				</div>
+
+				<p class="copyright">copyright here</p>
+			</div>
+
+			<div id="center">
+                <div id="time">
+                    <p class="text-medium" id="day-cycle">day / night</p>
+                    <p class="text-big" id="turn">TURN</p>
+                </div>
+
+				<div id="users"></div>
+			</div>
+
+			<div id="right">
+				<div id="chat">
+                    WIP
+                </div>
+			</div>
+		</div>
+
+		<script src="/socket/socket.io.js"></script>
+		<script src="../javascript/client.js"></script>
+	</body>
+</html>
