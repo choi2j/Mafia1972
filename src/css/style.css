@@ -99,6 +99,7 @@ body {
 .input {
     padding: 0.5rem 1rem;
     width: 30rem;
+    display: block;
     border: none;
     background: #222;
     color: #ddd;

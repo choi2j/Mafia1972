@@ -1,3 +1,4 @@
+<!-- WIP -->
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -14,8 +15,12 @@
 					<p class="text-small">choice's</p>
 					<p class="text-big">MaFia</p>
 					<div class="connect">
-						<form action="./list" method="post">
-							<input type="text" name="name" id="" class="input" placeholder="이름 입력">
+						<form action="./register" method="post">
+							<input type="text" name="name" id="username" class="input" placeholder="이름 입력">
+							<button onclick="idCheck()" id="idCheck">중복확인</button>
+                            <input type="password" name="password" id="password" class="input" placeholder="비밀번호 입력">
+                            <input type="password" name="passwordRe" id="passwordRe" class="input" placeholder="비밀번호 확인">
+                            <span></span>
 						</form>
 						
 					</div>
@@ -25,6 +30,6 @@
 		</div>
 		
 		<script src="/socket/socket.io.js"></script>
-		<script src="../javascript/client.js"></script>
+		<script src="../js/newUser.js"></script>
 	</body>
 </html>
