@@ -31,7 +31,10 @@ const PORT = process.env.PORT || 5000;
 
 
 //game variable
-
+let roomList = [
+    {roomName: 'asdf', roomOwner: 'scvif', roomPeople: ['scvif']},
+    {roomName: 'qwer', roomOwner: 'choi2j', roomPeople: ['choi2j']}, //테스트용
+];
 
 //socket code
 
@@ -39,6 +42,10 @@ io.on('connection', (socket) => {
     console.log(`${socket.id} connected`);
     socket.on('login',() => {
         socket.emit()
+    })
+
+    socket.on('reqRoomList', () => {
+        socket.emit('resRoomList', roomList);
     })
     socket.on('roomChoice', (roomName) => {
         socket.join(roomName);
@@ -57,6 +64,10 @@ server.listen(PORT, () => {
 
     app.get('/list', (req, res) => {
         res.sendFile(__dirname + '/src/html/list.html');
+    })
+
+    app.post('/createRoom', (req, res) => {
+
     })
 })
 
