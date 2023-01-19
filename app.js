@@ -32,29 +32,38 @@ const PORT = process.env.PORT || 5000;
 
 //game variable
 let roomList = [
-    {roomName: 'asdf', roomOwner: 'scvif', roomPeople: ['scvif']},
-    {roomName: 'qwer', roomOwner: 'choi2j', roomPeople: ['choi2j']}, //테스트용
+    {roomName: 'asdf', roomOwner: 'scvif', roomPeople: ['scvif'], roomPassword: '1234'},
+    {roomName: 'qwer', roomOwner: 'choi2j', roomPeople: ['choi2j'], roomPassword: '1234'}, //테스트용
 ];
+let username = [
+    {username: 'scvif', id: 'someidlen20aaaaaaaaa'},
+    {username: 'scvif', id: 'someidlen20bbbbbbbbb'}
+]
+
 
 //socket code
-
 io.on('connection', (socket) => {
     console.log(`${socket.id} connected`);
-    socket.on('login',() => {
-        socket.emit()
-    })
+
+    socket.emit('session', {
+        id: socket.id,
+        handshake: socket.handshake
+    });
 
     socket.on('reqRoomList', () => {
         socket.emit('resRoomList', roomList);
     })
+
     socket.on('roomChoice', (roomName) => {
         socket.join(roomName);
+        console.log(socket.rooms);
         socket.emit('connectRoom', roomName);
     })
 
     socket.on('disconnect', () => {
         console.log(`${socket.id} disconnected`);
     })
+
 })
 
 
@@ -62,12 +71,15 @@ io.on('connection', (socket) => {
 server.listen(PORT, () => {
     console.log(`server is running ${PORT}`);
 
-    app.get('/list', (req, res) => {
-        res.sendFile(__dirname + '/src/html/list.html');
-    })
-
-    app.post('/createRoom', (req, res) => {
-
+    app.post('/roomCreate', (req, res) => {
+        roomList.push({
+            roomName: req.body.roomName,
+            roomOwner: req.body.roomOwner,
+            roomPeople: [req.body.roomOwner],
+            roomPassword: req.body.roomPassword
+        })
+        console.log(roomList);
+        res.sendFile(__dirname + '/html/room.html?ownerName=' + req.body.roomOwner);
     })
 })
 
