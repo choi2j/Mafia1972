@@ -89,6 +89,14 @@ body {
     background: #ddd;
 }
 
+#log {
+    display: flex;
+    flex-direction: column;
+    height: 40%;
+    width: 100%;
+    bottom: 0;
+}
+
 #room-list {
     height: 100%;
     width: 100%;
@@ -128,6 +136,10 @@ body {
 
 .room-item:nth-child(even) {
     background: #333;
+}
+
+.room-item:hover {
+    border: 2px solid white;
 }
 
 .room-ul {

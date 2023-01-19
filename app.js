@@ -35,26 +35,35 @@ let roomList = [
     {roomName: 'asdf', roomOwner: 'scvif', roomPeople: ['scvif']},
     {roomName: 'qwer', roomOwner: 'choi2j', roomPeople: ['choi2j']}, //테스트용
 ];
+let username = [
+    {username: 'scvif', id: 'someidlen20aaaaaaaaa'},
+    {username: 'scvif', id: 'someidlen20bbbbbbbbb'}
+]
+
 
 //socket code
-
 io.on('connection', (socket) => {
     console.log(`${socket.id} connected`);
-    socket.on('login',() => {
-        socket.emit()
-    })
+
+    socket.emit('session', {
+        id: socket.id,
+        handshake: socket.handshake
+    });
 
     socket.on('reqRoomList', () => {
         socket.emit('resRoomList', roomList);
     })
+
     socket.on('roomChoice', (roomName) => {
         socket.join(roomName);
+        console.log(socket.rooms);
         socket.emit('connectRoom', roomName);
     })
 
     socket.on('disconnect', () => {
         console.log(`${socket.id} disconnected`);
     })
+
 })
 
 
@@ -63,11 +72,16 @@ server.listen(PORT, () => {
     console.log(`server is running ${PORT}`);
 
     app.get('/list', (req, res) => {
+        let username = req.query.name;
         res.sendFile(__dirname + '/src/html/list.html');
     })
 
     app.post('/createRoom', (req, res) => {
-
+        roomList.push({
+            roomName: req.query,
+            roomOwner: req.query,
+            roomPeople: [req.query]
+        })
     })
 })
 

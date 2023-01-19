@@ -8,11 +8,13 @@
 </head>
 <body>
     <form action="./roomCreate" method="post">
-        <input type="text" id="" class="" placeholder="방 이름 입력">
-        <input type="password" id="" class="" placeholder="방 비밀번호 입력">
+        <input type="text" id="roomName" class="" name="roomName" placeholder="방 이름 입력">
+        <input type="password" id="roomPassword" class="" name="roomPassword" placeholder="방 비밀번호 입력">
+        <input type="text" id="roomOwner" class="" name="roomOwner">
     </form>
 
     <script src="/js/socket.io.js"></script>
-	<script src="/js/client.js"></script>
+    <script src="/js/client.js"></script>
+	<script src="/js/newRoom.js"></script>
 </body>
 </html>
