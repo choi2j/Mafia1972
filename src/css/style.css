@@ -13,6 +13,12 @@ body {
 	background: #222;
 }
 
+#front {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
 .container {
 	display: flex;
 	height: 100%;

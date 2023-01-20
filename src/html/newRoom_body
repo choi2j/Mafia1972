@@ -1,0 +1,24 @@
+<div class="container">
+    <div id="left">
+        <div class="left-cat">
+            <p class="text-small">choice's</p>
+            <p class="text-big">(로고)</p>
+        </div>
+
+        <div class="left-cat">
+            <p id="username" class="text-small">이름</p>
+            <p class="text-big" id="user-name">NULL</p>
+        </div>
+
+        <p class="copyright">copyright here</p>
+    </div>
+
+    <div id="newRoom">
+        <input type="text" id="roomName" class="" name="roomName" placeholder="방 이름 입력">
+        <input type="text" id="roomPassword" class="" name="roomPassword" placeholder="방 비밀번호 입력">
+        <input type="hidden" id="roomOwner" class="" name="roomOwner">
+        <button onclick="newRoom()">만들기</button>
+    </div>
+</div>
+
+

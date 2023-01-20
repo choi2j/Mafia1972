@@ -11,6 +11,7 @@ socket.on('session', (data) => {
 socket.emit('reqRoomList');
 
 socket.on('resRoomList', (data) => {
+    document.getElementsByClassName('room-ul')[0].innerHTML = ''
     let div, Name, Owner, People;
     let item;
     for(let i = 0; i < data.length; i++) {

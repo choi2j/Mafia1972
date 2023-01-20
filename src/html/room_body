@@ -1,0 +1,44 @@
+<div class="container">
+    <div id="left">
+        <div class="left-cat">
+            <p class="text-small">choice's</p>
+            <p class="text-big">(로고)</p>
+        </div>
+
+        <div class="left-cat">
+            <p class="text-small">이름</p>
+            <p class="text-big" id="user-name">NULL</p>
+        </div>
+
+        <div class="left-cat">
+            <p class="text-small">역할</p>
+            <p class="text-big" id="role-name">NULL</p>
+            <p class="text-small" id="role-description">역할 설명</p>
+        </div>
+
+        <p class="copyright">copyright here</p>
+    </div>
+
+    <div id="center">
+        <div id="time">
+            <p class="text-medium" id="day-cycle">day / night</p>
+            <p class="text-big" id="turn">TURN</p>
+        </div>
+
+        <div id="users"></div>
+
+        <div id="log">
+            WIP
+            <ul>
+
+            </ul>
+        </div>
+    </div>
+
+    <div id="right">
+        <div id="chat">
+            WIP
+            <ul></ul>
+        </div>
+    </div>
+</div>

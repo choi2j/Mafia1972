@@ -8,47 +8,75 @@ const socketIO = require('socket.io');
 const io = socketIO(server);
 app.use(express.static(path.join(__dirname, 'src')));
 const PORT = process.env.PORT || 5000;
-
-
-// //SQL setting
-// const mysql = require('mysql');
-
-// var SQLconnection = mysql.createConnection({
-//     host: '127.0.0.1',
-//     port: '3306',
-//     user: 'serverUser',
-//     password: 'serverpassword'
-// })
-
-// SQLconnection.connect(function(err) {
-//     if(err) {
-//         console.error('error: ' + err.stack);
-//         return
-//     }
-
-//     console.log('connected as id ' + SQLconnection.threadId);
-// })
+const fs = require('fs');
 
 
 //game variable
 let roomList = [
-    {roomName: 'asdf', roomOwner: 'scvif', roomPeople: ['scvif'], roomPassword: '1234'},
-    {roomName: 'qwer', roomOwner: 'choi2j', roomPeople: ['choi2j'], roomPassword: '1234'}, //테스트용
+    {
+        roomName: 'asdf', 
+        roomOwner: 'scvif', 
+        roomPeople: [
+            {
+                id : undefined,
+                nickname : 'scvif', //string
+                job : undefined, //string ( mafia / citizen / doctor / police )
+                team : undefined, //string ( A or B )
+                alive : undefined //string ( observer / alive / dead )
+            }
+        ], 
+        teamMemCount: {
+            A : 0, //number
+            B : 0 //number
+        },
+        roomPassword: '1234'
+    },
+
+    {
+        roomName: 'qwer', 
+        roomOwner: 'choi2j', 
+        roomPeople: [
+            {
+                id : undefined,
+                nickname : 'choi2j', //string
+                job : undefined, //string
+                team : undefined, //string (A or B)
+                alive : undefined //boolrean
+            }
+        ], 
+        teamMemCount: {
+            A : 0, //number
+            B : 0 //number
+        },
+        roomPassword: '1234'
+    }, //테스트용 / 나중에 지워버릴 것
 ];
-let username = [
-    {username: 'scvif', id: 'someidlen20aaaaaaaaa'},
-    {username: 'scvif', id: 'someidlen20bbbbbbbbb'}
+let userList = [
+
 ]
+let indexBody = fs.readFileSync(__dirname + '\\src\\html\\index_body', 'utf8');
+
+let listBody = fs.readFileSync(__dirname + '\\src\\html\\list_body', 'utf8');
+let newRoomBody = fs.readFileSync(__dirname + '\\src\\html\\newRoom_body', 'utf8');
+let roomBody = fs.readFileSync(__dirname + '\\src\\html\\room_body', 'utf8');
+
+console.log(indexBody);
 
 
 //socket code
 io.on('connection', (socket) => {
     console.log(`${socket.id} connected`);
 
-    socket.emit('session', {
-        id: socket.id,
-        handshake: socket.handshake
-    });
+    socket.emit('sendPage', indexBody);
+
+    socket.on('login', (data) => {
+        userList.push({username: data, id: socket.id});
+        socket.emit('sendPage', listBody);
+    })
+
+    socket.on('newRoom', () => {
+        socket.emit('sendPage', newRoomBody);
+    })
 
     socket.on('reqRoomList', () => {
         socket.emit('resRoomList', roomList);
@@ -58,6 +86,34 @@ io.on('connection', (socket) => {
         socket.join(roomName);
         console.log(socket.rooms);
         socket.emit('connectRoom', roomName);
+    })
+
+    socket.on('makeNewRoom', (data) => {
+        roomList.push({
+            roomName: data.roomName, 
+            roomOwner: data.roomOwner, 
+            roomPeople: [
+                {
+                    id : socket.id,
+                    nickname : data.roomOwner, //string
+                    job : undefined, //string
+                    team : undefined, //string (A or B)
+                    alive : undefined //boolrean
+                }
+            ], 
+            teamMemCount: {
+                A : 0, //number
+                B : 0 //number
+            },
+            roomPassword: data.roomPassword
+        })
+        
+        console.log(roomList);
+        socket.emit('makeNewRoomOK');
+        socket.join(data.roomName);
+        console.log(socket.rooms);
+        io.emit('resRoomList', roomList);
+        
     })
 
     socket.on('disconnect', () => {
@@ -70,17 +126,6 @@ io.on('connection', (socket) => {
 //server code
 server.listen(PORT, () => {
     console.log(`server is running ${PORT}`);
-
-    app.post('/roomCreate', (req, res) => {
-        roomList.push({
-            roomName: req.body.roomName,
-            roomOwner: req.body.roomOwner,
-            roomPeople: [req.body.roomOwner],
-            roomPassword: req.body.roomPassword
-        })
-        console.log(roomList);
-        res.sendFile(__dirname + '/html/room.html?ownerName=' + req.body.roomOwner);
-    })
 })
 
 

@@ -1,7 +1,5 @@
 "use strict"
 
-let roomName;
-let userName, userJob, userAlive;
 
 
 socket.on('receiveLog', (data) => {

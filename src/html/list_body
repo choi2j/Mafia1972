@@ -1,0 +1,30 @@
+<div class="container">
+    <div id="left">
+        <div class="left-cat">
+            <p class="text-small">choice's</p>
+            <p class="text-big">(로고)</p>
+        </div>
+
+        <div class="left-cat">
+            <p id="username" class="text-small">이름</p>
+            <p class="text-big" id="user-name">NULL</p>
+        </div>
+
+        <p class="copyright">copyright here</p>
+    </div>
+
+    <div id="room-list">
+        <p class="text-big">방 찾기</p>
+        <div class="search">
+            <input class="input" type="text" id="search" onkeyup="filter()" placeholder="room name here" />
+        </div>
+        
+        <button onclick="socket.emit('newRoom')">방 만들기</button>
+        
+        <div class="room-ul">
+            
+        </div>
+    </div>
+</div>
+
+<script src="/js/list.js"></script>

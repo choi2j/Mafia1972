@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.2",
+    "filereader": "^0.10.3",
     "mysql": "^2.18.1",
     "nodemon": "^2.0.20",
     "socket.io": "^4.5.4"

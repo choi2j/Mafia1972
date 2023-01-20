@@ -1,0 +1,13 @@
+<div class="container">
+    <div class="index">
+        <div class="wrapper">
+            <p class="text-small">choice's</p>
+            <p class="text-big">MaFia</p>
+            <div class="connect">
+                <input type="text" name="name" id="" class="input" placeholder="이름 입력" onkeydown="if(event.keyCode == 13){socket.emit('login'), this.value; socket.emit('reqRoomList');}">
+                
+            </div>
+            <p class="copyright">made by choi2j/scvif</p>
+        </div>
+    </div>
+</div>
