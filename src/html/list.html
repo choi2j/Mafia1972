@@ -39,24 +39,22 @@
 					<input class="input" type="text" id="search" onkeyup="filter()" placeholder="room name here" />
 				</div>
 				<form method="get" action="/html/newRoom.html">
-					<input type="hidden" name="ownerName" id="newRoom-name"> 
+					<input type="hidden" name="ownerName" id="newRoom-name" />
 					<button type="submit">방 만들기</button>
 				</form>
-				<div class="room-ul">
-					
-				</div>
+				<div class="room-ul"></div>
 			</div>
 		</div>
-        
+
 		<script src="/js/socket.io.js"></script>
 		<script src="/js/client.js"></script>
 		<script src="/js/list.js"></script>
 
 		<script>
-			let username = getParameter('name');
+			let username = getParameter("name");
 
-			document.getElementById('user-name').innerHTML = username;
-			document.getElementById('newRoom-name').value = username;
+			document.getElementById("user-name").innerHTML = username;
+			document.getElementById("newRoom-name").value = username;
 		</script>
 	</body>
 </html>

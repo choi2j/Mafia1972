@@ -1,5 +1,3 @@
-"use strict"
-
-
+"use strict";
 
 let userName;
