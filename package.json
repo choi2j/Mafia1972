@@ -23,5 +23,6 @@
   "bugs": {
     "url": "https://github.com/choi2j/Mafia1972/issues"
   },
-  "homepage": "https://github.com/choi2j/Mafia1972#readme"
+  "homepage": "https://github.com/choi2j/Mafia1972#readme",
+  "devDependencies": {}
 }
