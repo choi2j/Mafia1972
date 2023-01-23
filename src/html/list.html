@@ -5,7 +5,17 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Mafia 1972</title>
-		<link rel="stylesheet" href="/src/css/style.css" />
+		<link rel="stylesheet" href="../css/style.css" />
+		<script>
+			// var req = new XMLHttpRequest();
+			// req.open('GET', '/ajax_list');
+			// req.send();
+			// req.onreadystatechange = function() {
+			// 	if( req.readyState === 4 && req.status === 200) {
+			// 		document.getElementById('username').innerHTML = req.name
+			// 	}
+			// }
+		</script>
 	</head>
 	<body>
 		<div class="container">
@@ -16,7 +26,7 @@
 				</div>
 
 				<div class="left-cat">
-					<p class="text-small">이름</p>
+					<p id="username" class="text-small">이름</p>
 					<p class="text-big" id="user-name">NULL</p>
 				</div>
 
@@ -28,41 +38,23 @@
 				<div class="search">
 					<input class="input" type="text" id="search" onkeyup="filter()" placeholder="room name here" />
 				</div>
-				<div class="room-ul">
-					<div class="room-item">
-						<p class="text-medium room-name">asdf</p>
-						<p class="text-small room-owner">소유자 이름</p>
-						<p class="text-small room-people">1/10</p>
-					</div>
-					<div class="room-item">
-						<p class="text-medium room-name">qwer</p>
-						<p class="text-small room-owner">소유자 이름</p>
-						<p class="text-small room-people">1/10</p>
-					</div>
-				</div>
+				<form method="get" action="/html/newRoom.html">
+					<input type="hidden" name="ownerName" id="newRoom-name" />
+					<button type="submit">방 만들기</button>
+				</form>
+				<div class="room-ul"></div>
 			</div>
 		</div>
 
+		<script src="/js/socket.io.js"></script>
+		<script src="/js/client.js"></script>
+		<script src="/js/list.js"></script>
+
 		<script>
-			function filter() {
-				let search = document.getElementById("search").value.toLowerCase();
-				let item = document.getElementsByClassName("room-item");
+			let username = getParameter("name");
 
-				for (let i = 0; i < item.length; i++) {
-					let name = item[i].getElementsByClassName("room-name");
-					let owner = item[i].getElementsByClassName("room-owner");
-
-					if (name[0].innerText.toLowerCase().indexOf(search) != -1 || owner[0].innerText.toLowerCase().indexOf(search) != -1) {
-					    item[i].style.display = "flex";
-                        item[i].style.flexDirection = "column";
-				    } else {
-					    item[i].style.display = "none";
-					}
-				}
-			}
+			document.getElementById("user-name").innerHTML = username;
+			document.getElementById("newRoom-name").value = username;
 		</script>
-        
-		<script src="/socket/socket.io.js"></script>
-		<script src="../javascript/client.js"></script>
 	</body>
 </html>

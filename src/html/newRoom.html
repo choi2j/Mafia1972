@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+	</head>
+	<body>
+		<form action="../../roomCreate" method="post">
+			<input type="text" id="roomName" class="" name="roomName" placeholder="방 이름 입력" />
+			<input type="password" id="roomPassword" class="" name="roomPassword" placeholder="방 비밀번호 입력" />
+			<input type="hidden" id="roomOwner" class="" name="roomOwner" />
+			<button type="submit">만들기</button>
+		</form>
+
+		<script src="/js/socket.io.js"></script>
+		<script src="/js/client.js"></script>
+		<script src="/js/newRoom.js"></script>
+
+		<script>
+			let ownerName = getParameter("ownerName");
+			document.getElementById("roomOwner").value = ownerName;
+		</script>
+	</body>
+</html>

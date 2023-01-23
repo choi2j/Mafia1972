@@ -5,7 +5,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Mafia 1972</title>
-		<link rel="stylesheet" href="/src/css/style.css" />
+		<link rel="stylesheet" href="../css/style.css" />
 	</head>
 	<body>
 		<div class="container">
@@ -14,14 +14,17 @@
 					<p class="text-small">choice's</p>
 					<p class="text-big">MaFia</p>
 					<div class="connect">
-						<input type="text" name="" id="" class="input" placeholder="이름 입력">
+						<form action="/html/list.html" method="get">
+							<input type="text" name="name" id="" class="input" placeholder="이름 입력">
+						</form>
+						
 					</div>
-					<p class="copyright">copyright here</p>
+					<p class="copyright">made by choi2j/scvif</p>
 				</div>
 			</div>
 		</div>
 		
-		<script src="/socket/socket.io.js"></script>
-		<script src="../javascript/client.js"></script>
+		<script src="/js/socket.io.js"></script>
+		<script src="/js/client.js"></script>
 	</body>
 </html>
