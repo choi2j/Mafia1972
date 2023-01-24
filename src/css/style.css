@@ -74,8 +74,13 @@ header button {
 }
 
 .input-big{
-    padding: 10rem 5rem;
+    padding: 5rem 5rem;
     background-color: #303030;
+}
+
+.input-big form {
+    display: flex;
+    flex-direction: column;
 }
 
 .input-big input {
