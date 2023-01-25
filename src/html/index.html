@@ -12,16 +12,16 @@
 			<header>
 				<button>MAFIA</button>
 			</header>
-			
+
 			<div id="container">
 				<div id="left">
 					<div id="mkroom">
 						<div class="input-big">
 							<p class="text-big">MAFIA</p>
 							<form action="">
-								<input type="text" name="" id="" placeholder="owner name set"/>
-								<input type="text" name="" id="" placeholder="room name set"/>
-								<input type="password" name="" id="" placeholder="room password set"/>
+								<input type="text" name="" id="" placeholder="owner name set" />
+								<input type="text" name="" id="" placeholder="room name set" />
+								<input type="password" name="" id="" placeholder="room password set" />
 							</form>
 						</div>
 					</div>
@@ -37,7 +37,7 @@
 						<div class="input-big">
 							<p class="text-big">MAFIA</p>
 							<form action="">
-								<input type="text" name="" id="" placeholder="name"/>
+								<input type="text" name="" id="" placeholder="name" />
 							</form>
 						</div>
 					</div>
@@ -53,9 +53,55 @@
 								<p class="text-small">COUNT</p>
 								<button>VOTE</button>
 							</div>
+							<div class="user">
+								<p class="text-small">NAME</p>
+								<p class="text-small">DEAD</p>
+								<button>VOTE</button>
+							</div>
+							<div class="user">
+								<p class="text-small">NAME</p>
+								<p class="text-small">DEAD</p>
+								<button>VOTE</button>
+							</div>
+							<div class="user dead">
+								<p class="text-small">NAME</p>
+								<p class="text-small">DEAD</p>
+								<button>VOTE</button>
+							</div>
+							<div class="user">
+								<p class="text-small">NAME</p>
+								<p class="text-small">DEAD</p>
+								<button>VOTE</button>
+							</div>
+							<div class="user">
+								<p class="text-small">NAME</p>
+								<p class="text-small">COUNT</p>
+								<button>VOTE</button>
+							</div>
+							<div class="user dead">
+								<p class="text-small">NAME</p>
+								<p class="text-small">DEAD</p>
+								<button>VOTE</button>
+							</div>
+							<div class="user none">
+								<p class="text-small">NAME</p>
+								<p class="text-small">DEAD</p>
+								<button>VOTE</button>
+							</div>
+							<div class="user none">
+								<p class="text-small">NAME</p>
+								<p class="text-small">DEAD</p>
+								<button>VOTE</button>
+							</div>
+							<div class="user none">
+								<p class="text-small">NAME</p>
+								<p class="text-small">DEAD</p>
+								<button>VOTE</button>
+							</div>
 						</div>
 						<div id="game-log">
-
+							<p class="log">this is a pre-set log</p>
+							<p class="log">this is a pre-set log for <span class="log-user">USER</span></p>
 						</div>
 					</div>
 				</div>
@@ -63,12 +109,20 @@
 				<div id="right">
 					<div id="chat">
 						<div class="input-small">
-							<input type="text" name="" id="" placeholder="chat here (WIP)" class="input-small"/>
+							<input type="text" name="" id="" placeholder="chat here (WIP)" class="input-small" />
+						</div>
+						<div class="chat">
+							<ul class="chat-log">
+								<li>
+									<span class="chat-name">ASDF</span>
+									<span class="chat-content">hello world!</span>
+								</li>
+							</ul>
 						</div>
 					</div>
 					<div id="room">
 						<div class="input-small">
-							<input type="text" name="" id="" placeholder="room name" class="input-small" onchange="filter()"/>
+							<input type="text" name="" id="" placeholder="room name" class="input-small" onchange="filter()" />
 						</div>
 						<ul class="room-list">
 							<li class="room-item">
