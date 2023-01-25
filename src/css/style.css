@@ -99,7 +99,8 @@ header button {
 }
 
 #password,
-#name {
+#name,
+#mkroom {
     display: none;
 }
 
@@ -144,4 +145,56 @@ header button {
 
 .room-list li:nth-child(even) {
     background: #252525;
+}
+
+#room {
+    display: none;
+}
+
+#game {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    color: #ddd;
+}
+
+#game-top {
+    text-align: center;
+    width: 100%;
+    height: 20%;
+    background: #303030;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#game-top p {
+    margin: 1rem;
+}
+
+#game-user {
+    height: 50%;
+    display: flex;
+    flex: auto;
+}
+
+#game-user .user {
+    display: flex;
+    width: 40%;
+    height: fit-content;
+    margin: 1rem;
+    padding: 1rem;
+    justify-content: space-around;
+    background: #303030;
+}
+
+#game-log {
+    display: flex;
+    flex-direction: column;
+    background: #303030;
+    width: 100%;
+    height: 30%;
 }
