@@ -5,22 +5,16 @@ let currentRoom;
 
 
 
+socket.on("server-sendRoomList", (data) => {
+	document.getElementsByClassName("room-list")[0].innerHTML = '';
 
-
-socket.on("session", (data) => {
-	console.log(data);
-});
-
-socket.on("resRoomList", (data) => {
-	let div, Name, Owner, People;
-	let item;
+	let li, Name, Owner, People;
 	for (let i = 0; i < data.length; i++) {
-		div = document.createElement("div");
-		div.className = "room-item";
-		div.id = data[i].roomName;
+		li = document.createElement("li");
+		li.className = "room-item";
 
 		Name = document.createElement("p");
-		Name.className = "text-medium room-name";
+		Name.className = "text-big room-name";
 		Name.innerHTML = data[i].roomName;
 
 		Owner = document.createElement("p");
@@ -28,30 +22,30 @@ socket.on("resRoomList", (data) => {
 		Owner.innerHTML = data[i].roomOwner;
 
 		People = document.createElement("p");
-		People.className = "text-small room-people";
+		People.className = "text-small room-cap";
 		People.innerHTML = `${data[i].roomPeople.length}/10`;
 
-		div.appendChild(Name);
-		div.appendChild(Owner);
-		div.appendChild(People);
-		div.addEventListener("click", joinroom);
+		li.appendChild(Name);
+		li.appendChild(Owner);
+		li.appendChild(People);
+		li.addEventListener('click', () => {
+			selectRoom(data[i].roomName);
+		})
 
-		document.getElementsByClassName("room-ul")[0].appendChild(div);
+		document.getElementsByClassName("room-list")[0].appendChild(li);
 	}
 });
 
 function makeRoom() {
-	let roomName = document.getElementById('newRoomName');
-	let password = document.getElementById('newRoomPassword');
-	let ownerName = document.getElementById('ownerName');
+	let roomName = document.getElementById('mkroomName').value;
+	let password = document.getElementById('mkroomPassword').value;
+	let ownerName = document.getElementById('mkownerName').value;
 
 	let sendData = [roomName, password, ownerName];
-
 	socket.emit('makeNewRoom', sendData);
+
+	return false;
 }
-
-
-
 
 function selectRoom(target) {
 	document.getElementById('mkroom').style.display = 'none';
@@ -59,6 +53,14 @@ function selectRoom(target) {
 	document.getElementById('name').style.display = 'flex';
 	console.log(target);
 	currentRoom = target;
+}
+
+function joinroom() {
+	let password = document.getElementById('jiroomPassword').value;
+	let userName = document.getElementById('jiroomUsername').value;
+	socket.emit('joinRoom', [currentRoom, password, userName]);
+
+	return false;
 }
 
 /**

@@ -11,7 +11,6 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.2",
-    "mysql": "^2.18.1",
     "nodemon": "^2.0.20",
     "socket.io": "^4.5.4"
   },
@@ -23,6 +22,5 @@
   "bugs": {
     "url": "https://github.com/choi2j/Mafia1972/issues"
   },
-  "homepage": "https://github.com/choi2j/Mafia1972#readme",
-  "devDependencies": {}
+  "homepage": "https://github.com/choi2j/Mafia1972#readme"
 }

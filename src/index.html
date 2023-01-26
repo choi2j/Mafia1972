@@ -18,26 +18,20 @@
 					<div id="mkroom">
 						<div class="input-big">
 							<p class="text-big">MAFIA</p>
-							<form action="#" onsubmit="makeRoom()">
-								<input type="text" name="" id="newRoomName" placeholder="room name set"/>
-								<input type="text" name="" id="newRoomPassword" placeholder="room password set"/>
-                                <input type="text" name="" id="ownerName" placeholder="name set"/>
+							<form action="" onsubmit="return makeRoom()">
+								<input type="text" name="" id="mkownerName" placeholder="owner name set" value="" />
+								<input type="text" name="" id="mkroomName" placeholder="room name set" value="" />
+								<input type="text" name="" id="mkroomPassword" placeholder="room password set" value="" />
+                                <input type="submit" value="submit" />
 							</form>
 						</div>
 					</div>
-					<div id="password">
+					<div id="joinroom">
 						<div class="input-big">
 							<p class="text-big">MAFIA</p>
-							<form action="">
-								<input type="password" name="" id="inputPassword" placeholder="room password" />
-							</form>
-						</div>
-					</div>
-					<div id="name">
-						<div class="input-big">
-							<p class="text-big">MAFIA</p>
-							<form action="">
-								<input type="text" name="" id="inputName" placeholder="name"/>
+							<form action="" onsubmit="">
+								<input type="password" name="" id="jiroomPassword" placeholder="room password" />
+								<input type="text" name="" id="jiroomUsername" placeholder="name"/>
 							</form>
 						</div>
 					</div>

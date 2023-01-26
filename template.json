@@ -1,0 +1,36 @@
+{
+    "awesomeRoom": {
+        "roomName": "awesomeRoom",
+        "ownerName": "owner",
+        "roomPassword": "roomPassword",
+        "player": {
+            "owner's socketID": {
+                "nickname": "owner",
+                "alive": true,
+                "job": "mafia / police / doctor / citizen",
+                "team": "A / B"
+            },
+            "player1's socketID": {
+                "nickname": "palyer1",
+                "alive": true,
+                "job": "mafia / police / doctor / citizen",
+                "team": "A / B"
+            }
+        },
+        "day": 0,
+        "time": "night",
+        "alivePeople": {
+            "teamA": 7,
+            "teamB": 3
+        },
+        "chats": [
+            { "name": "name", "content": "content" },
+            { "name": "name", "content": "content" },
+            { "name": "name", "content": "content" }
+        ],
+        "log": [
+            "asdf is dead",
+            "asdf is mafia"
+        ]
+    }
+}

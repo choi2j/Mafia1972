@@ -94,8 +94,11 @@ header button {
     text-align: center;
 }
 
-#password,
-#name {
+input {
+    display: block;
+}
+
+#joinroom {
     display: none;
 }
 
