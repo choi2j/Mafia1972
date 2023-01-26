@@ -1,0 +1,24 @@
+
+playertemplate = {
+    "id": socket.id,
+    "nickname": ownerName,
+    "alive": 'ALIVE', //"ALIVE / DEAD",
+    "job": undefined, //"mafia / police / doctor / citizen",
+    "team": undefined, //"A / B"
+}
+
+
+roomList[roomName] = {
+    "roomName": roomName,
+    "ownerName": ownerName,
+    "roomPassword": password,
+    "player": {},
+    "day": 0,
+    "time": "night",
+    "alivePeople": {
+        "teamA": 0,
+        "teamB": 0
+    },
+    "chats": [],
+    "log": []
+}

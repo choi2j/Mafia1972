@@ -69,6 +69,7 @@ header button {
     justify-content: center;
 }
 
+#joinroom,
 #password,
 #name,
 #mkroom {
@@ -94,7 +95,7 @@ header button {
 .input-big input {
     margin: 2rem 0;
     padding: 0.5rem 1rem;
-    background-color: nonerent;
+    background-color: transparent;
     border: none;
     border-bottom: #ddd 1px solid;
     outline: none;
@@ -104,12 +105,6 @@ header button {
 
 input {
     display: block;
-}
-
-#password,
-#name,
-#mkroom {
-    display: none;
 }
 
 #right {
@@ -155,9 +150,7 @@ input {
     background: #252525;
 }
 
-#room {
-    display: none;
-}
+
 
 #game {
     width: 100%;
@@ -258,6 +251,10 @@ input {
     font-weight: 600;
 }
 
+li {
+    display: block;
+}
+
 #chat {
     height: 100%;
     display: flex;
@@ -267,7 +264,7 @@ input {
 
 #chat .chat-log {
     padding: 1rem;
-    display: flex;
+    display: block;
     align-items: center;
     color: #ddd;
     font-weight: 300;
@@ -275,4 +272,21 @@ input {
 
 #chat .chat-name {
     margin: 2rem;
+}
+
+#joinroom,
+#password,
+#name,
+#mkroom,
+#game {
+    display: none;
+}
+
+#room,
+#chat {
+    display: none;
+}
+
+.preset {
+    display: none;
 }
