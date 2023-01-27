@@ -176,6 +176,15 @@ input {
     margin: 1rem;
 }
 
+#game-top button {
+    background: #252525;
+    border: none;
+    color: #ddd;
+    padding: 0.5rem 1rem;
+    margin: 0;
+    cursor: pointer;
+}
+
 #game-user {
     height: 55%;
     width: 100%;
