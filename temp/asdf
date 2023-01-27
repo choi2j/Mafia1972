@@ -1,14 +1,4 @@
-
-playertemplate = {
-    "id": socket.id,
-    "nickname": ownerName,
-    "alive": 'ALIVE', //"ALIVE / DEAD",
-    "job": undefined, //"mafia / police / doctor / citizen",
-    "team": undefined, //"A / B"
-}
-
-
-roomList[roomName] = {
+roomName = {
     "roomName": roomName,
     "ownerName": ownerName,
     "roomPassword": password,
@@ -21,4 +11,14 @@ roomList[roomName] = {
     },
     "chats": [],
     "log": []
+};
+
+
+player = 
+{
+    "id": socket.id,
+    "nickname": ownerName,
+    "alive": "observer", //"ALIVE / DEAD / observer / wait",
+    "job": undefined, //"mafia / police / doctor / citizen",
+    "team": undefined, //"A / B"
 }

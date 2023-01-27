@@ -2,6 +2,8 @@ const socket = io();
 
 let currentRoom;
 let currentUserName;
+let isOwner;
+let roomData;
 
 
 socket.on('screen-init', () => {
@@ -51,8 +53,8 @@ socket.on('server-sendJoinRoomOK', (data) => {
 
 	gameTopUpdate(data);
 	gameUserUpdate(data);
-	gameLogUpdate(data);
-	gameChatUpdate(data);
+	gameLogInit(data);
+	gameChatInit(data);
 })
 
 socket.on('server-sendMessage', (data) => {
@@ -69,6 +71,17 @@ socket.on('server-sendChatUpdate', (data) => {
 
 socket.on('server-sendLog', (data) => {
 	gameLogUpdate(data)
+})
+
+socket.on('server-sendYouAreOwner', () => {
+	isOwner = true;
+	let button = document.createElement('button');
+	button.id = 'gameStart';
+	button.addEventListener('click', () => {
+		socket.emit('gameStart', currentRoom);
+	})
+
+	document.getElementById('chat').appendChild(button);
 })
 
 /**
@@ -178,24 +191,36 @@ function gameUserUpdate(data) {
 
 function gameLogInit(data) {}
 
-function gameChatInit(data) {}
-
-//WIP
-function gameLogUpdate(data) {
-	let li = document.createElement('li');
+function gameChatInit(data) {
+	for (let i = 0; i < data.chats.length; i++) {
+		let li = document.createElement('li');
 	
-	let name = document.createElement('span');
-	name.innerHTML = data.id;
-	name.className = 'chat-name';
+		let name = document.createElement('span');
+		name.innerHTML = data.chats[i].id;
+		name.className = 'chat-name';
 
-	let content = document.createElement('span');
-	content.innerHTML = data.content;
-	content.className = chat-content;
+		let content = document.createElement('span');
+		content.innerHTML = data.chats[i].content;
+		content.className = 'chat-content';
 
-	li.appendChild(name);
-	li.appendChild(content);
+		li.appendChild(name);
+		li.appendChild(content);
 
+		document.getElementById('chat-log').appendChild(li);
+	}
+	let li = document.createElement('li')
+	li.innerHTML = '===================';
 	document.getElementById('chat-log').appendChild(li);
+}
+
+function gameLogUpdate(data) {
+	let content = data;
+
+	let p = document.createElement('p');
+	p.className = 'log';
+	p.innerHTML = content;
+
+	document.getElementById('game-log').appendChild(p);
 }
 
 function gameChatUpdate(data) {
@@ -207,7 +232,7 @@ function gameChatUpdate(data) {
 
 	let content = document.createElement('span');
 	content.innerHTML = data.content;
-	content.className = chat-content;
+	content.className = 'chat-content';
 
 	li.appendChild(name);
 	li.appendChild(content);
