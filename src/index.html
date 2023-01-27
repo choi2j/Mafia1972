@@ -12,7 +12,7 @@
 			<header>
 				<button>MAFIA</button>
 			</header>
-			
+
 			<div id="container">
 				<div id="left">
 					<div id="mkroom">
@@ -22,7 +22,7 @@
 								<input type="text" name="" id="mkownerName" placeholder="owner name set" value="" />
 								<input type="text" name="" id="mkroomName" placeholder="room name set" value="" />
 								<input type="text" name="" id="mkroomPassword" placeholder="room password set" value="" />
-                                <input type="submit" value="submit" />
+								<input type="submit" value="submit" />
 							</form>
 						</div>
 					</div>
@@ -31,7 +31,7 @@
 							<p class="text-big">MAFIA</p>
 							<form action="" onsubmit="return joinroom()">
 								<input type="password" name="" id="jiroomPassword" placeholder="room password" />
-								<input type="text" name="" id="jiroomUsername" placeholder="name"/>
+								<input type="text" name="" id="jiroomUsername" placeholder="name" />
 								<input type="submit" value="submit" />
 							</form>
 						</div>
@@ -39,7 +39,7 @@
 					<div id="game">
 						<div id="game-top">
 							<p class="text-big" id="roomName">ROOM NAME</p>
-							<p class="text-mid" id="time">day / night</p>
+							<p class="text-mid" id="time"><button onclick="start()">START</button></p>
 							<p class="text-small" id="currentMafiaCount">current mafia count</p>
 						</div>
 						<div id="game-user">
@@ -106,10 +106,7 @@
 						<div class="input-small">
 							<form action="" onsubmit="return sendChatting(this.children[0].value)">
 								<input type="text" name="" id="chatContent" placeholder="chat here (WIP)" class="input-small" />
-								<button type="submit">SEND</button>
 							</form>
-							
-							
 						</div>
 						<div class="chat">
 							<ul class="chat-log" id="chat-log">
@@ -122,17 +119,15 @@
 					</div>
 					<div id="room">
 						<div class="input-small">
-							<input type="text" name="" id="" placeholder="room name" class="input-small" onchange="filter()"/>
+							<input type="text" name="" id="" placeholder="room name" class="input-small" onchange="filter()" />
 						</div>
-						<ul class="room-list">
-							
-						</ul>
+						<ul class="room-list"></ul>
 					</div>
 				</div>
 			</div>
 		</div>
 
-        <script src="/js/socket.io.js"></script>
-        <script src="/js/client.js"></script>
+		<script src="/js/socket.io.js"></script>
+		<script src="/js/client.js"></script>
 	</body>
 </html>
