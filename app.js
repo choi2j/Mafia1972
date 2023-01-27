@@ -266,3 +266,5 @@ function jobSetting(roomName, users, mafia, police, doctor, citizen) {
 function rand(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+//이것은 아무 의미없는 주석
