@@ -269,6 +269,7 @@ li {
     display: flex;
     flex-direction: column-reverse;
     justify-content: flex-start;
+    overflow: auto;
 }
 
 #chat .chat-log {

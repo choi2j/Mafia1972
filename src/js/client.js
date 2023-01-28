@@ -5,22 +5,21 @@ let currentUserName;
 let isOwner;
 let roomData;
 
-
-socket.on('screen-init', () => {
-	screenChange('mkroom', 'room');
-})
+socket.on("screen-init", () => {
+	screenChange("mkroom", "room");
+});
 
 socket.on("server-sendRoomList", (data) => {
 	console.log(data);
 	console.log(Object.keys(data).length);
-	document.getElementsByClassName("room-list")[0].innerHTML = '';
+	document.getElementsByClassName("room-list")[0].innerHTML = "";
 
 	let li, Name, Owner, People;
-	let key
+	let key;
 	for (let i = 0; i < Object.keys(data).length; i++) {
 		key = Object.keys(data)[i];
-		
-		console.log('data[key]: ', data[key]);
+
+		console.log("data[key]: ", data[key]);
 
 		li = document.createElement("li");
 		li.className = "room-item";
@@ -40,64 +39,64 @@ socket.on("server-sendRoomList", (data) => {
 		li.appendChild(Name);
 		li.appendChild(Owner);
 		li.appendChild(People);
-		li.addEventListener('click', () => {
+		li.addEventListener("click", () => {
 			selectRoom(data[key].roomName);
-		})
+		});
 
 		document.getElementsByClassName("room-list")[0].appendChild(li);
 	}
 });
 
-socket.on('server-sendJoinRoomOK', (data) => {
-	screenChange('game', 'chat');
+socket.on("server-sendJoinRoomOK", (data) => {
+	screenChange("game", "chat");
 
 	gameTopUpdate(data);
 	gameUserUpdate(data);
 	gameLogInit(data);
 	gameChatInit(data);
-})
+});
 
-socket.on('server-sendMessage', (data) => {
+socket.on("server-sendMessage", (data) => {
 	alert(data);
-})
+});
 
-socket.on('server-sendUserUpdate', (data) => {
+socket.on("server-sendUserUpdate", (data) => {
 	gameUserUpdate(data);
-})
+});
 
-socket.on('server-sendChatUpdate', (data) => {
+socket.on("server-sendChatUpdate", (data) => {
 	gameChatUpdate(data);
-})
+});
 
-socket.on('server-sendLog', (data) => {
-	gameLogUpdate(data)
-})
+socket.on("server-sendLog", (data) => {
+	gameLogUpdate(data);
+});
 
-socket.on('server-sendYouAreOwner', () => {
+socket.on("server-sendYouAreOwner", () => {
 	isOwner = true;
-	let button = document.createElement('button');
-	button.id = 'gameStart';
-	button.addEventListener('click', () => {
-		socket.emit('gameStart', currentRoom);
-	})
+	let button = document.createElement("button");
+	button.id = "gameStart";
+	button.addEventListener("click", () => {
+		socket.emit("gameStart", currentRoom);
+	});
 
-	document.getElementById('chat').appendChild(button);
-})
+	document.getElementById("chat").appendChild(button);
+});
 
 /**
  * 화면 바꿔주는 함수
- * @param {string} left 왼쪽에 들어갈거 id 
+ * @param {string} left 왼쪽에 들어갈거 id
  * @param {string} right 오른쪽에 들어갈거 id
  */
 function screenChange(left, right) {
-	document.getElementById('mkroom').style.display = 'none';
-	document.getElementById('joinroom').style.display = 'none';
-	document.getElementById('game').style.display = 'none';
-	document.getElementById('chat').style.display = 'none';
-	document.getElementById('room').style.display = 'none';
+	document.getElementById("mkroom").style.display = "none";
+	document.getElementById("joinroom").style.display = "none";
+	document.getElementById("game").style.display = "none";
+	document.getElementById("chat").style.display = "none";
+	document.getElementById("room").style.display = "none";
 
-	document.getElementById(left).style.display = 'flex';
-	document.getElementById(right).style.display = 'flex';
+	document.getElementById(left).style.display = "flex";
+	document.getElementById(right).style.display = "flex";
 }
 
 /**
@@ -105,24 +104,24 @@ function screenChange(left, right) {
  * @returns 리턴 안해요 - form action 안하려고 넣음
  */
 function makeRoom() {
-	let roomName = document.getElementById('mkroomName').value;
-	let password = document.getElementById('mkroomPassword').value;
-	let ownerName = document.getElementById('mkownerName').value;
+	let roomName = document.getElementById("mkroomName").value;
+	let password = document.getElementById("mkroomPassword").value;
+	let ownerName = document.getElementById("mkownerName").value;
 
 	let sendData = [roomName, password, ownerName];
 	currentRoom = roomName;
 	currentUserName = ownerName;
-	socket.emit('makeNewRoom', sendData);
+	socket.emit("makeNewRoom", sendData);
 
 	return false;
 }
 
 /**
  * 방 선택하면 이름 / 비밀번호 입력창 띄워주는 함수
- * @param {script} target 
+ * @param {script} target
  */
 function selectRoom(target) {
-	screenChange('joinroom', 'room');
+	screenChange("joinroom", "room");
 	currentRoom = target;
 }
 
@@ -131,11 +130,11 @@ function selectRoom(target) {
  * @returns 리턴 안해요 - form action 안하려고 넣음
  */
 function joinroom() {
-	let password = document.getElementById('jiroomPassword').value;
-	let userName = document.getElementById('jiroomUsername').value;
+	let password = document.getElementById("jiroomPassword").value;
+	let userName = document.getElementById("jiroomUsername").value;
 	if (!(password == undefined || userName == undefined)) {
 		currentUserName = userName;
-		socket.emit('joinRoom', [currentRoom, password, userName]);
+		socket.emit("joinRoom", [currentRoom, password, userName]);
 	}
 
 	return false;
@@ -162,29 +161,29 @@ function filter() {
 }
 
 function sendChatting(data) {
-	socket.emit('client-sendChatting', [currentRoom, currentUserName, data]);
+	socket.emit("client-sendChatting", [currentRoom, currentUserName, data]);
 
 	return false;
 }
 
 function gameTopUpdate(data) {
-	document.getElementById('roomName').innerHTML = data.roomName;
-	document.getElementById('time').innerHTML = data.time;
-	document.getElementById('currentMafiaCount').innerHTML = data.alivePeople.teamA;
+	document.getElementById("roomName").innerHTML = data.roomName;
+	document.getElementById("time").innerHTML = data.time;
+	document.getElementById("currentMafiaCount").innerHTML = data.alivePeople.teamA;
 }
 
 function gameUserUpdate(data) {
-	let users = document.getElementsByClassName('user');
+	let users = document.getElementsByClassName("user");
 	for (let i = 0; i < users.length; i++) {
-		users[i].className = 'user none';
+		users[i].className = "user none";
 	}
 
 	for (let i = 0; i < Object.keys(data.player).length; i++) {
 		users[i].children[0].innerHTML = data.player[Object.keys(data.player)[i]].nickname;
 		users[i].children[1].innerHTML = data.player[Object.keys(data.player)[i]].alive;
-		users[i].className = 'user';
-		if (data.player[Object.keys(data.player)[i]].alive == 'DEAD') {
-			users[i].className = 'user dead';
+		users[i].className = "user";
+		if (data.player[Object.keys(data.player)[i]].alive == "DEAD") {
+			users[i].className = "user dead";
 		}
 	}
 }
@@ -193,49 +192,49 @@ function gameLogInit(data) {}
 
 function gameChatInit(data) {
 	for (let i = 0; i < data.chats.length; i++) {
-		let li = document.createElement('li');
-	
-		let name = document.createElement('span');
-		name.innerHTML = data.chats[i].id;
-		name.className = 'chat-name';
+		let li = document.createElement("li");
 
-		let content = document.createElement('span');
+		let name = document.createElement("span");
+		name.innerHTML = data.chats[i].id;
+		name.className = "chat-name";
+
+		let content = document.createElement("span");
 		content.innerHTML = data.chats[i].content;
-		content.className = 'chat-content';
+		content.className = "chat-content";
 
 		li.appendChild(name);
 		li.appendChild(content);
 
-		document.getElementById('chat-log').appendChild(li);
+		document.getElementById("chat-log").appendChild(li);
 	}
-	let li = document.createElement('li')
-	li.innerHTML = '===================';
-	document.getElementById('chat-log').appendChild(li);
+	let li = document.createElement("li");
+	li.innerHTML = "===================";
+	document.getElementById("chat-log").appendChild(li);
 }
 
 function gameLogUpdate(data) {
 	let content = data;
 
-	let p = document.createElement('p');
-	p.className = 'log';
+	let p = document.createElement("p");
+	p.className = "log";
 	p.innerHTML = content;
 
-	document.getElementById('game-log').appendChild(p);
+	document.getElementById("game-log").appendChild(p);
 }
 
 function gameChatUpdate(data) {
-	let li = document.createElement('li');
-	
-	let name = document.createElement('span');
-	name.innerHTML = data.id;
-	name.className = 'chat-name';
+	let li = document.createElement("li");
 
-	let content = document.createElement('span');
+	let name = document.createElement("span");
+	name.innerHTML = data.id;
+	name.className = "chat-name";
+
+	let content = document.createElement("span");
 	content.innerHTML = data.content;
-	content.className = 'chat-content';
+	content.className = "chat-content";
 
 	li.appendChild(name);
 	li.appendChild(content);
 
-	document.getElementById('chat-log').appendChild(li);
+	document.getElementById("chat-log").appendChild(li);
 }
