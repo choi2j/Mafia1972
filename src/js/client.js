@@ -39,8 +39,9 @@ socket.on("server-sendRoomList", (data) => {
 		li.appendChild(Name);
 		li.appendChild(Owner);
 		li.appendChild(People);
+		let target = data[key].roomName;
 		li.addEventListener("click", () => {
-			selectRoom(data[key].roomName);
+			selectRoom(`${target}`);
 		});
 
 		document.getElementsByClassName("room-list")[0].appendChild(li);
@@ -72,15 +73,22 @@ socket.on("server-sendLog", (data) => {
 	gameLogUpdate(data);
 });
 
+socket.on("server-sendGameUpdate", (data) => {
+	gameTopUpdate(data);
+	gameUserUpdate(data);
+})
+
 socket.on("server-sendYouAreOwner", () => {
 	isOwner = true;
 	let button = document.createElement("button");
 	button.id = "gameStart";
+	button.innerHTML = "Game Start";
 	button.addEventListener("click", () => {
 		socket.emit("gameStart", currentRoom);
 	});
 
-	document.getElementById("chat").appendChild(button);
+	document.getElementById("time").innerHTML = "";
+	document.getElementById("time").appendChild(button);
 });
 
 /**
@@ -169,7 +177,28 @@ function sendChatting(data) {
 function gameTopUpdate(data) {
 	document.getElementById("roomName").innerHTML = data.roomName;
 	document.getElementById("time").innerHTML = data.time;
-	document.getElementById("currentMafiaCount").innerHTML = data.alivePeople.teamA;
+	if (document.getElementById("time").innerHTML == "Not Start Yet" && isOwner != true) {
+		let button = document.createElement("button");
+		button.id = "gameParticipate";
+		button.innerHTML = "Game Participate";
+		button.addEventListener("click", () => {
+			socket.emit("gameParticipate", [currentRoom, socket.id]);
+		});
+
+		document.getElementById("time").innerHTML = "";
+		document.getElementById("time").appendChild(button);
+	} else if (document.getElementById("time").innerHTML == "Not Start Yet" && isOwner == true) {
+		let button = document.createElement("button");
+		button.id = "gameStart";
+		button.innerHTML = "Game Start";
+		button.addEventListener("click", () => {
+			socket.emit("gameStart", currentRoom);
+		});
+
+		document.getElementById("time").innerHTML = "";
+		document.getElementById("time").appendChild(button);
+	}
+	document.getElementById("currentMafiaCount").innerHTML = data.alivePeople.teamB;
 }
 
 function gameUserUpdate(data) {
@@ -188,7 +217,19 @@ function gameUserUpdate(data) {
 	}
 }
 
-function gameLogInit(data) {}
+function gameLogInit(data) {
+	for (let i = 0; i < data.log.length; i++) {
+		let p = document.createElement("p");
+
+		p.innerHTML = data.log[i];
+		p.className = "log";
+
+		document.getElementById("game-log").appendChild(p);
+	}
+	let p = document.createElement("p");
+	p.innerHTML = "===================";
+	document.getElementById("game-log").appendChild(p);
+}
 
 function gameChatInit(data) {
 	for (let i = 0; i < data.chats.length; i++) {

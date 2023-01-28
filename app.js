@@ -22,18 +22,20 @@ io.on("connection", (socket) => {
 	socket.emit('server-sendRoomList', roomList);
 
 	socket.on('makeNewRoom', (data) => {
-		let roomName = data[0];
+		let target = data[0];
 		let password = data[1];
 		let ownerName = data[2];
 
-		if(roomList[roomName] === undefined) {
-			roomList[roomName] = {
-				"roomName": roomName,
+		let room = roomList[target];
+
+		if(room === undefined) {
+			room = {
+				"roomName": target,
 				"ownerName": ownerName,
 				"roomPassword": password,
 				"player": {},
 				"day": 0,
-				"time": "night",
+				"time": "Not Start Yet",
 				"alivePeople": {
 					"teamA": 0,
 					"teamB": 0
@@ -43,19 +45,19 @@ io.on("connection", (socket) => {
 			};
 			
 
-			roomList[roomName].player[socket.id] = 
+			room.player[socket.id] = 
 			{
 				"id": socket.id,
 				"nickname": ownerName,
-				"alive": "observer", //"ALIVE / DEAD / observer",
+				"alive": "wait", //"ALIVE / DEAD / observer",
 				"job": undefined, //"mafia / police / doctor / citizen",
 				"team": undefined, //"A / B"
 			}
 		
-			
+			roomList[target] = room;
 			io.emit('server-sendRoomList', roomList);
-			socket.join(roomName);
-			socket.emit('server-sendJoinRoomOK', roomList[roomName]);
+			socket.join(target);
+			socket.emit('server-sendJoinRoomOK', room);
 			socket.emit('server-sendYouAreOwner');
 		} else {
 			socket.emit('server-sendMessage', '방 생성 실패 : 같은 이름의 방이 있음');
@@ -72,21 +74,23 @@ io.on("connection", (socket) => {
 
 		let overlapCheck;
 
-		for (let i = 0; i < Object.keys(roomList[target].player).length; i++) {
-			if (roomList[target].player[Object.keys(roomList[target].player)[i]].nickname === undefined) {
+		let room = roomList[target];
+
+		for (let i = 0; i < Object.keys(room.player).length; i++) {
+			if (room.player[Object.keys(room.player)[i]].nickname === undefined) {
 				continue;
 			}
-			if (roomList[target].player[Object.keys(roomList[target].player)[i]].nickname === userName) {
+			if (room.player[Object.keys(room.player)[i]].nickname === userName) {
 				overlapCheck = true;
 			}
 		}
 
 		if (overlapCheck != true) {
-			if (roomList[target].roomPassword === password && Object.keys(roomList[target].player).length < 10) {
+			if (room.roomPassword === password && Object.keys(room.player).length < 10) {
 
 				socket.join(target);
 
-				roomList[target].player[socket.id] = 
+				room.player[socket.id] = 
 				{
 					"id": socket.id,
 					"nickname": userName,
@@ -97,25 +101,24 @@ io.on("connection", (socket) => {
 
 				io.emit('server-sendRoomList', roomList);
 				sendlog(target, 'room', null, `${userName}님이 접속했습니다.`);
-				socket.emit('server-sendJoinRoomOK', roomList[target]);
+				socket.emit('server-sendJoinRoomOK', room);
 				
 			} else {
-				if(!(roomList[target].roomPassword === password)) {
+				if(!(room.roomPassword === password)) {
 					socket.emit('server-sendMessage', '방 접속 실패 : 비밀번호 불일치');
 				}
-				if(!(Object.keys(roomList[target].player).length < 10)) {
+				if(!(Object.keys(room.player).length < 10)) {
 					socket.emit('server-sendMessage', '방 접속 실패 : 인원 제한');
 				}
 			}
 
-			io.to(target).emit('server-sendUserUpdate', (roomList[target]));
+			io.to(target).emit('server-sendUserUpdate', (room));
 		} else {
 			socket.emit('server-sendMessage', '방 접속 실패 : 닉네임 중복');
 		}
 	})
 
 	socket.on('client-sendChatting', (data) => {
-		console.log(data);
 		let content = {id: data[1], content: data[2]}
 		roomList[data[0]].chats.push(content);
 		io.to(data[0]).emit('server-sendChatUpdate', content);
@@ -140,9 +143,24 @@ io.on("connection", (socket) => {
 
 	socket.on('gameStart', (target) => {
 		let room = roomList[target];
+
+		let userCount = 0;
 		for (let i = 0; i < Object.keys(room.player).length; i++) {
-			if (Object.keys(room.player)[i].alive == 'wait') {
-				Object.keys(room.player)[i].alive = 'ALIVE';
+			if (room.player[Object.keys(room.player)[i]].alive == 'wait') {
+				userCount++;
+			}
+		}
+
+		console.log(userCount);
+
+		if (userCount < 4) {
+			socket.emit('server-sendMessage', '게임 시작 실패 : 인원 부족');
+			return;
+		}
+
+		for (let i = 0; i < Object.keys(room.player).length; i++) {
+			if (room.player[Object.keys(room.player)[i]].alive == 'wait') {
+				room.player[Object.keys(room.player)[i]].alive = 'ALIVE';
 			}
 		}
 		io.to(target).emit('server-sendUserUpdate', room);
@@ -152,7 +170,7 @@ io.on("connection", (socket) => {
 
 		
 		for (let i = 0; i < temp.length; i++) {
-			if (room.player[temp[i]].alive == 'wait') {
+			if (room.player[temp[i]].alive == 'ALIVE') {
 				userList.push(temp[i]);
 			}
 		}
@@ -191,10 +209,24 @@ io.on("connection", (socket) => {
 		}
 
 
-		room.time = 'night';
+		room.time = 'day';
 		console.log('ok');
-		console.log(room);
+
+		io.to(room.roomName).emit('server-sendGameUpdate', room);
 	})
+
+	socket.on('gameParticipate', (data) => {
+		let target = data[0];
+		let userName = data[1];
+
+		let room = roomList[target];
+
+		room.player[userName].alive = 'wait';
+
+		io.to(target).emit('server-sendGameUpdate', room);
+	})
+
+
 });
 
 //server code
@@ -223,7 +255,6 @@ function sendlog(room, targetType, target, content) {
 	roomList[room].log.push(content);
 }
 
-
 /**
  * 직업 정해주는 함수
  * @param {String} roomName 직업 설정할 방 이름
@@ -234,33 +265,51 @@ function sendlog(room, targetType, target, content) {
  * @param {Number} citizen 시민 수
  */
 function jobSetting(roomName, users, mafia, police, doctor, citizen) {
-	
+	console.log(users);
+	let room = roomList[roomName];
 	
 	for (let j = 0; j < mafia; j++) {
 		let num = rand(0, users.length - 1);
-		roomList[roomName].player[users[num]].job = 'mafia';
-		roomList[roomName].player[users[num]].team = 'B';
-		users.slice(num, 1);
+		console.log(users);
+		console.log([num, users[num]]);
+		room.player[users[num]].job = 'mafia';
+		room.player[users[num]].team = 'B';
+		sendlog(roomName, 'person', users[num], `당신은 마피아입니다.`);
+		sendlog(roomName, 'person', users[num], `매일 밤 사람 한 명을 죽일 수 있습니다.`);
+		users.splice(num, 1);
 	}
 	for (let j = 0; j < police; j++) {
 		let num = rand(0, users.length - 1);
-		roomList[roomName].player[users[num]].job = 'police';
-		roomList[roomName].player[users[num]].team = 'A';
-		users.slice(num, 1);
+		console.log(users);
+		console.log([num, users[num]]);
+		room.player[users[num]].job = 'police';
+		room.player[users[num]].team = 'A';
+		sendlog(roomName, 'person', users[num], `당신은 경찰입니다.`);
+		sendlog(roomName, 'person', users[num], `매일 밤 사람 한 명이 마피아인지 아닌지 알 수 있습니다.`);
+		users.splice(num, 1);
 	}
 	for (let j = 0; j < doctor; j++) {
 		let num = rand(0, users.length - 1);
-		roomList[roomName].player[users[num]].job = 'doctor';
-		roomList[roomName].player[users[num]].team = 'A';
-		users.slice(num, 1);
+		console.log(users);
+		console.log([num, users[num]]);
+		room.player[users[num]].job = 'doctor';
+		room.player[users[num]].team = 'A';
+		sendlog(roomName, 'person', users[num], `당신은 의사입니다.`);
+		sendlog(roomName, 'person', users[num], `매일 밤 사람 한 명을 치료할 수 있습니다.`);
+		users.splice(num, 1);
 	}
 	for (let j = 0; j < citizen; j++) {
 		let num = rand(0, users.length - 1);
-		roomList[roomName].player[users[num]].job = 'citizen';
-		roomList[roomName].player[users[num]].team = 'A';
-		users.slice(num, 1);
+		console.log(users);
+		console.log([num, users[num]]);
+		room.player[users[num]].job = 'citizen';
+		room.player[users[num]].team = 'A';
+		sendlog(roomName, 'person', users[num], `당신은 시민입니다.`);
+		sendlog(roomName, 'person', users[num], `마피아를 색출해 살아남으십시오. 행운을 빕니다.`);
+		users.splice(num, 1);
 	}
 	
+	console.log(room);
 }
 
 function rand(min, max) {

@@ -240,6 +240,8 @@ input {
     background: #303030;
     width: 100%;
     height:25%;
+    justify-content: flex-start;
+    overflow: auto;
 }
 
 #game-log .log {
