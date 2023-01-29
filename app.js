@@ -8,7 +8,6 @@ const socketIO = require("socket.io");
 const io = socketIO(server);
 app.use(express.static(path.join(__dirname, "src")));
 const PORT = process.env.PORT || 5000;
-const fs = require('fs');
 
 
 //game variable
@@ -151,30 +150,24 @@ io.on("connection", (socket) => {
 			}
 		}
 
-		console.log(userCount);
-
 		if (userCount < 4) {
 			socket.emit('server-sendMessage', '게임 시작 실패 : 인원 부족');
 			return;
 		}
-
 		for (let i = 0; i < Object.keys(room.player).length; i++) {
 			if (room.player[Object.keys(room.player)[i]].alive == 'wait') {
 				room.player[Object.keys(room.player)[i]].alive = 'ALIVE';
 			}
 		}
 		io.to(target).emit('server-sendUserUpdate', room);
-		
 		let temp = Object.keys(room.player);
 		let userList = [];
 
-		
 		for (let i = 0; i < temp.length; i++) {
 			if (room.player[temp[i]].alive == 'ALIVE') {
 				userList.push(temp[i]);
 			}
 		}
-		
 
 		switch (userList.length) {
 			case 4:
@@ -200,19 +193,41 @@ io.on("connection", (socket) => {
 				break;
 		}
 
-		for (let i = 0; i < userList.length; i++) {
-			if (room.player[userList[i]].team == 'A') {
-				room.alivePeople.teamA++;
-			} else if (room.player[userList[i]].team == 'B') {
-				room.alivePeople.teamB++;
+		for (let i = 0; i < temp.length; i++) {
+			if (room.player[temp[i]].alive == 'ALIVE') {
+				userList.push(temp[i]);
 			}
 		}
 
+		console.log(userList);
 
-		room.time = 'day';
-		console.log('ok');
+		for (let i = 0; i < userList.length; i++) {
+			console.log('c');
+			if (room.player[userList[i]].team == 'A') {
+				room.alivePeople.teamA++;
+				console.log('a');
+			} else if (room.player[userList[i]].team == 'B') {
+				room.alivePeople.teamB++;
+				console.log('b');
+			}
+		}
+
+		
 
 		io.to(room.roomName).emit('server-sendGameUpdate', room);
+
+		while (
+			room.alivePeople.teamA > room.alivePeople.teamB &&
+			room.alivePeople.teamB > 0
+		) {
+			room.time = 'day';
+			io.to(room.roomName).emit('server-sendGameUpdate', room);
+			timer(180, room.roomName);
+			console.log('ok'); //타이머 끝나기 전에 이거 먼저 실행됨. 거지같은 동기비동기
+			io.to(room.roomName).emit('server-sendGameUpdate', room); 
+			room.time = 'night';
+			timer(120, room.roomName);
+		}
 	})
 
 	socket.on('gameParticipate', (data) => {
@@ -270,8 +285,6 @@ function jobSetting(roomName, users, mafia, police, doctor, citizen) {
 	
 	for (let j = 0; j < mafia; j++) {
 		let num = rand(0, users.length - 1);
-		console.log(users);
-		console.log([num, users[num]]);
 		room.player[users[num]].job = 'mafia';
 		room.player[users[num]].team = 'B';
 		sendlog(roomName, 'person', users[num], `당신은 마피아입니다.`);
@@ -280,8 +293,6 @@ function jobSetting(roomName, users, mafia, police, doctor, citizen) {
 	}
 	for (let j = 0; j < police; j++) {
 		let num = rand(0, users.length - 1);
-		console.log(users);
-		console.log([num, users[num]]);
 		room.player[users[num]].job = 'police';
 		room.player[users[num]].team = 'A';
 		sendlog(roomName, 'person', users[num], `당신은 경찰입니다.`);
@@ -290,8 +301,6 @@ function jobSetting(roomName, users, mafia, police, doctor, citizen) {
 	}
 	for (let j = 0; j < doctor; j++) {
 		let num = rand(0, users.length - 1);
-		console.log(users);
-		console.log([num, users[num]]);
 		room.player[users[num]].job = 'doctor';
 		room.player[users[num]].team = 'A';
 		sendlog(roomName, 'person', users[num], `당신은 의사입니다.`);
@@ -300,8 +309,6 @@ function jobSetting(roomName, users, mafia, police, doctor, citizen) {
 	}
 	for (let j = 0; j < citizen; j++) {
 		let num = rand(0, users.length - 1);
-		console.log(users);
-		console.log([num, users[num]]);
 		room.player[users[num]].job = 'citizen';
 		room.player[users[num]].team = 'A';
 		sendlog(roomName, 'person', users[num], `당신은 시민입니다.`);
@@ -309,11 +316,25 @@ function jobSetting(roomName, users, mafia, police, doctor, citizen) {
 		users.splice(num, 1);
 	}
 	
-	console.log(room);
 }
 
 function rand(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function timer(time, target) {
+	var left = time;
+
+	var x = setInterval(function() {
+
+		io.to(target).emit('server-sendTime', left);
+		left--;
+
+		//타임아웃 시
+		if (time < 0) {
+			clearInterval(x);
+			return;
+		}
+	}, 1000);
+}
 //이것은 아무 의미없는 주석

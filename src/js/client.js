@@ -4,6 +4,7 @@ let currentRoom;
 let currentUserName;
 let isOwner;
 let roomData;
+let currentVoted;
 
 socket.on("screen-init", () => {
 	screenChange("mkroom", "room");
@@ -74,6 +75,7 @@ socket.on("server-sendLog", (data) => {
 });
 
 socket.on("server-sendGameUpdate", (data) => {
+	roomData = data;
 	gameTopUpdate(data);
 	gameUserUpdate(data);
 })
@@ -219,16 +221,16 @@ function gameUserUpdate(data) {
 
 function gameLogInit(data) {
 	for (let i = 0; i < data.log.length; i++) {
-		let p = document.createElement("p");
+		let li = document.createElement("li");
 
-		p.innerHTML = data.log[i];
-		p.className = "log";
+		li.innerHTML = data.log[i];
+		li.className = "log";
 
-		document.getElementById("game-log").appendChild(p);
+		document.getElementById("logContent").appendChild(li);
 	}
-	let p = document.createElement("p");
-	p.innerHTML = "===================";
-	document.getElementById("game-log").appendChild(p);
+	let li = document.createElement("li");
+	li.innerHTML = "===================";
+	document.getElementById("logContent").appendChild(li);
 }
 
 function gameChatInit(data) {
@@ -256,11 +258,11 @@ function gameChatInit(data) {
 function gameLogUpdate(data) {
 	let content = data;
 
-	let p = document.createElement("p");
-	p.className = "log";
-	p.innerHTML = content;
+	let li = document.createElement("li");
+	li.className = "log";
+	li.innerHTML = content;
 
-	document.getElementById("game-log").appendChild(p);
+	document.getElementById("logContent").appendChild(li);
 }
 
 function gameChatUpdate(data) {
