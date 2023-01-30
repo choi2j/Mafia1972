@@ -35,6 +35,7 @@ io.on("connection", (socket) => {
 				"player": {},
 				"day": 0,
 				"time": "Not Start Yet",
+				"partyciPlayer": [],
 				"alivePeople": {
 					"teamA": 0,
 					"teamB": 0
@@ -51,6 +52,7 @@ io.on("connection", (socket) => {
 				"alive": "wait", //"ALIVE / DEAD / observer",
 				"job": undefined, //"mafia / police / doctor / citizen",
 				"team": undefined, //"A / B"
+				"gainedBallot": 0 //0
 			}
 		
 			roomList[target] = room;
@@ -96,6 +98,7 @@ io.on("connection", (socket) => {
 					"alive": 'observer', //true / false,
 					"job": undefined, //"mafia / police / doctor / citizen",
 					"team": undefined, //"A / B"
+					"gainedBallot": 0 //0
 				}
 
 				io.emit('server-sendRoomList', roomList);
@@ -171,10 +174,10 @@ io.on("connection", (socket) => {
 
 		switch (userList.length) {
 			case 4:
-				jobSetting(target, userList, 1, 0, 1, 2);
+				jobSetting(target, userList, 1, 1, 0, 2);
 				break;
 			case 5:
-				jobSetting(target, userList, 1, 0, 1, 3);
+				jobSetting(target, userList, 1, 1, 0, 3);
 				break;
 			case 6:
 				jobSetting(target, userList, 1, 1, 1, 3);
@@ -183,51 +186,36 @@ io.on("connection", (socket) => {
 				jobSetting(target, userList, 2, 1, 1, 3);
 				break;
 			case 8:
-				jobSetting(target, userList, 2, 1, 2, 3);
+				jobSetting(target, userList, 2, 2, 1, 3);
 				break;
 			case 9:
-				jobSetting(target, userList, 3, 1, 2, 3);
+				jobSetting(target, userList, 3, 2, 1, 3);
 				break;
 			case 10:
-				jobSetting(target, userList, 3, 1, 2, 4);
+				jobSetting(target, userList, 3, 2, 1, 4);
 				break;
 		}
 
 		for (let i = 0; i < temp.length; i++) {
 			if (room.player[temp[i]].alive == 'ALIVE') {
-				userList.push(temp[i]);
+				room.partyciPlayer.push(temp[i]);
 			}
 		}
 
-		console.log(userList);
-
 		for (let i = 0; i < userList.length; i++) {
-			console.log('c');
 			if (room.player[userList[i]].team == 'A') {
 				room.alivePeople.teamA++;
-				console.log('a');
 			} else if (room.player[userList[i]].team == 'B') {
 				room.alivePeople.teamB++;
-				console.log('b');
 			}
 		}
 
 		
 
+		room.time = 'day';
 		io.to(room.roomName).emit('server-sendGameUpdate', room);
-
-		while (
-			room.alivePeople.teamA > room.alivePeople.teamB &&
-			room.alivePeople.teamB > 0
-		) {
-			room.time = 'day';
-			io.to(room.roomName).emit('server-sendGameUpdate', room);
-			timer(180, room.roomName);
-			console.log('ok'); //타이머 끝나기 전에 이거 먼저 실행됨. 거지같은 동기비동기
-			io.to(room.roomName).emit('server-sendGameUpdate', room); 
-			room.time = 'night';
-			timer(120, room.roomName);
-		}
+		
+		dayFunc(room);
 	})
 
 	socket.on('gameParticipate', (data) => {
@@ -241,7 +229,16 @@ io.on("connection", (socket) => {
 		io.to(target).emit('server-sendGameUpdate', room);
 	})
 
+	socket.on('client-sendVote', (data) => {
+		let room = roomList[data[0]];
+		let voted = data[1];
+		let target = data[2];
 
+		if(roomList.player[voted] !== undefined) {
+			roomList.player[voted].gainedBallot--;
+		}
+		roomList.player[target].gainedBallot++;
+	})
 });
 
 //server code
@@ -280,7 +277,6 @@ function sendlog(room, targetType, target, content) {
  * @param {Number} citizen 시민 수
  */
 function jobSetting(roomName, users, mafia, police, doctor, citizen) {
-	console.log(users);
 	let room = roomList[roomName];
 	
 	for (let j = 0; j < mafia; j++) {
@@ -322,7 +318,7 @@ function rand(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function timer(time, target) {
+async function timer(time, target, ) {
 	var left = time;
 
 	var x = setInterval(function() {
@@ -333,8 +329,123 @@ function timer(time, target) {
 		//타임아웃 시
 		if (time < 0) {
 			clearInterval(x);
-			return;
+			console.log('ok');
+			return 1;
 		}
 	}, 1000);
 }
-//이것은 아무 의미없는 주석
+
+
+//WIP
+
+/**
+ * 낮 함수
+ * @param {Object} target 방 데이터
+ */
+async function dayFunc (target) {
+	if(
+		room.alivePeople.teamA > room.alivePeople.teamB &&
+		room.alivePeople.teamB > 0
+	) {
+		io.to(target.roomName).emit('server-sendGameUpdate', room);
+		io.to(target.roomName).emit('server-sendDay');
+		sendlog(target.roomName, 'room', null, '낮이 되었습니다.');
+		timer(180, target).then(dayEndFunc(target));
+	} else {
+		gameEnd(target);
+	}
+}
+
+/**
+ * 낮 끝날때 쓰는 함수
+ * @param {Object} target 방 데이터
+ */
+async function dayEndFunc(target) {
+	if(
+		target.alivePeople.teamA > target.alivePeople.teamB &&
+		target.alivePeople.teamB > 0
+	) {
+		io.to(target.roomName).emit('server-sendGameUpdate', target);
+
+		var inner = async function () {
+			let deadVoted;
+			let temp1 = [];
+			target.time = 'night';
+			for (let i = 0; i < target.partyciPlayer.length - 1; i++) {
+				if (target.player[partyciPlayer[i]].gainedBallot > target.player[partyciPlayer[i + 1]].gainedBallot) {
+					deadVoted = target.player[partyciPlayer[i]].gainedBallot;
+				} else {
+					deadVoted = target.player[partyciPlayer[i + 1]].gainedBallot;
+				}
+			}
+
+			for(let i = 0; i < target.partyciPlayer.length; i++) {
+				if(target.player[partyciPlayer[i]].gainedBallot == deadVoted) {
+					temp1.push(target.player[partyciPlayer[i]].id);
+				}
+				sendlog(target.roomName, 'room', null, `${target.player[partyciPlayer[i]].nickname}의 득표수 : ${target.player[partyciPlayer[i]].gainedBallot}`);
+			}
+
+			if (temp1.length > 1) {
+				sendlog(target.roomName, 'room', null, '아무도 죽지 않았습니다 : 득표수 같음');
+			} else {
+				sendlog(target.roomName, 'room', null, `${temp1[0]}이 투표로 죽었습니다.`);
+				if (target.player[temp1[0]].team == 'A') {
+					sendlog(target.roomName, 'room', null, `${temp1[0]}은 마피아가 아니었습니다.`);
+					target.alivePeople.teamA--;
+				} else if (target.player[temp1[0]].team == 'B') {
+					sendlog(target.roomName, 'room', null, `${temp1[0]}은 마피아였습니다.`);
+					target.alivePeople.teamB--;
+				}
+				target.player[temp1[0]].alive = 'DEAD';
+			}
+		}
+		inner().then(nightFunc(target));
+	} else {
+		gameEnd(target);
+	}
+}
+
+/**
+ * 밤 함수
+ * @param {Object} target 방 데이터
+ */
+async function nightFunc(target) {
+	if(
+		room.alivePeople.teamA > room.alivePeople.teamB &&
+		room.alivePeople.teamB > 0
+	) {
+		sendlog(target.roomName, 'room', null, '밤이 되었습니다.');
+		io.to(target.roomName).emit('server-sendGameUpdate', room);
+		io.to(target.roomName).emit('server-sendNight');
+		timer(120, target).then(nightEndFunc(target));
+	} else {
+		gameEnd(target);
+	}
+}
+
+/**
+ * 밤 끝날때 쓰는 함수
+ * @param {Object} target 방 데이터
+ */
+async function nightEndFunc(target) {
+	if(
+		room.alivePeople.teamA > room.alivePeople.teamB &&
+		room.alivePeople.teamB > 0
+	) {
+		var inner = async function () {
+			io.to(target.roomName).emit('server-sendGameUpdate', room);
+		}
+		inner().then(dayFunc(target));
+	} else {
+		gameEnd(target);
+	}
+}
+
+/**
+ * 게임 끝나면 쓰는 함수
+ * @param {Object} target 방 데이터
+ */
+function gameEnd(target) {
+
+}

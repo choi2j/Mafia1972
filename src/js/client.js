@@ -2,6 +2,7 @@ const socket = io();
 
 let currentRoom;
 let currentUserName;
+let currentJob;
 let isOwner;
 let roomData;
 let currentVoted;
@@ -76,6 +77,9 @@ socket.on("server-sendLog", (data) => {
 
 socket.on("server-sendGameUpdate", (data) => {
 	roomData = data;
+	currentJob = data.player[socket.id].job;
+	
+
 	gameTopUpdate(data);
 	gameUserUpdate(data);
 })
@@ -92,6 +96,16 @@ socket.on("server-sendYouAreOwner", () => {
 	document.getElementById("time").innerHTML = "";
 	document.getElementById("time").appendChild(button);
 });
+
+socket.on('server-sendNight', () => {
+	if (currentJob != 'mafia') {
+		document.getElementById('chatForm').style.display = 'none';
+	}
+})
+
+socket.on('server-sendDay', () => {
+	document.getElementById('chatForm').style.display = 'flex';
+})
 
 /**
  * 화면 바꿔주는 함수
@@ -212,6 +226,7 @@ function gameUserUpdate(data) {
 	for (let i = 0; i < Object.keys(data.player).length; i++) {
 		users[i].children[0].innerHTML = data.player[Object.keys(data.player)[i]].nickname;
 		users[i].children[1].innerHTML = data.player[Object.keys(data.player)[i]].alive;
+		users[i].children[2].id = data.player[Object.keys(data.player)[i]].id;
 		users[i].className = "user";
 		if (data.player[Object.keys(data.player)[i]].alive == "DEAD") {
 			users[i].className = "user dead";
@@ -280,4 +295,9 @@ function gameChatUpdate(data) {
 	li.appendChild(content);
 
 	document.getElementById("chat-log").appendChild(li);
+}
+
+function vote(target) {
+	socket.emit('client-sendVote', [currentRoom, currentVoted, target]);
+	currentVoted = target;
 }

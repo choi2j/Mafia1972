@@ -1,10 +1,11 @@
-roomName = {
-    "roomName": roomName,
+room = {
+    "roomName": target,
     "ownerName": ownerName,
     "roomPassword": password,
     "player": {},
     "day": 0,
-    "time": "night",
+    "time": "Not Start Yet",
+    "partyciPlayer": [],
     "alivePeople": {
         "teamA": 0,
         "teamB": 0
@@ -21,4 +22,5 @@ player =
     "alive": "observer", //"ALIVE / DEAD / observer / wait",
     "job": undefined, //"mafia / police / doctor / citizen",
     "team": undefined, //"A / B"
+    "gainedBallot": 0 //0
 }

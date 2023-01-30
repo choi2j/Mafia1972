@@ -48,52 +48,52 @@
 							<div class="user">
 								<p class="text-small">NAME</p>
 								<p class="text-small">COUNT</p>
-								<button>VOTE</button>
+								<button class="vote" onclick="vote(this.id)">VOTE</button>
 							</div>
 							<div class="user">
 								<p class="text-small">NAME</p>
 								<p class="text-small">DEAD</p>
-								<button>VOTE</button>
+								<button class="vote" onclick="vote(this.id)">VOTE</button>
 							</div>
 							<div class="user">
 								<p class="text-small">NAME</p>
 								<p class="text-small">DEAD</p>
-								<button>VOTE</button>
+								<button class="vote" onclick="vote(this.id)">VOTE</button>
 							</div>
 							<div class="user dead">
 								<p class="text-small">NAME</p>
 								<p class="text-small">DEAD</p>
-								<button>VOTE</button>
+								<button class="vote" onclick="vote(this.id)">VOTE</button>
 							</div>
 							<div class="user">
 								<p class="text-small">NAME</p>
 								<p class="text-small">DEAD</p>
-								<button>VOTE</button>
+								<button class="vote" onclick="vote(this.id)">VOTE</button>
 							</div>
 							<div class="user">
 								<p class="text-small">NAME</p>
 								<p class="text-small">COUNT</p>
-								<button>VOTE</button>
+								<button class="vote" onclick="vote(this.id)">VOTE</button>
 							</div>
 							<div class="user dead">
 								<p class="text-small">NAME</p>
 								<p class="text-small">DEAD</p>
-								<button>VOTE</button>
+								<button class="vote" onclick="vote(this.id)">VOTE</button>
 							</div>
 							<div class="user none">
 								<p class="text-small">NAME</p>
 								<p class="text-small">DEAD</p>
-								<button>VOTE</button>
+								<button class="vote" onclick="vote(this.id)">VOTE</button>
 							</div>
 							<div class="user none">
 								<p class="text-small">NAME</p>
 								<p class="text-small">DEAD</p>
-								<button>VOTE</button>
+								<button class="vote" onclick="vote(this.id)">VOTE</button>
 							</div>
 							<div class="user none">
 								<p class="text-small">NAME</p>
 								<p class="text-small">DEAD</p>
-								<button>VOTE</button>
+								<button class="vote" onclick="vote(this.id)">VOTE</button>
 							</div>
 						</div>
 						<div id="game-log">
@@ -109,7 +109,7 @@
 				<div id="right">
 					<div id="chat">
 						<div class="input-small">
-							<form action="" onsubmit="return sendChatting(this.children[0].value)">
+							<form id="chatForm" action="" onsubmit="return sendChatting(this.children[0].value)">
 								<input type="text" name="" id="chatContent" placeholder="chat here (WIP)" class="input-small" />
 							</form>
 						</div>
