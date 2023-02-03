@@ -496,3 +496,4 @@ function gameEnd(target) {
 	io.to(target.roomName).emit('server-sendGameEnd', target);
 	console.log('My Work Is Done.');
 }
+//이것은 아무 의미없는 주석
