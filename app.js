@@ -3,6 +3,7 @@ const express = require("express");
 const http = require("http");
 const app = express();
 const path = require("path");
+const { send } = require("process");
 const server = http.createServer(app);
 const socketIO = require("socket.io");
 const io = socketIO(server);
@@ -245,10 +246,17 @@ io.on("connection", (socket) => {
 	})
 
 	socket.on('client-sendMafiaAction', (data) => { //WIP
-		let roomName = data[0];
-		let target = data[1];
+		let room = roomList[data[0]];
+		let voted = data[1];
+		let target = data[2];
+		console.log(data);
 
-		roomList[roomName].player[socket.id].action = target;
+		if(roomList[data[0]].player[voted] !== undefined) {
+			room.player[voted].gainedBallot--;
+		} else {
+			
+		}
+		room.player[target].gainedBallot++;
 	});
 	
 	socket.on('client-sendPoliceAction', (data) => { //WIP
@@ -284,7 +292,11 @@ function sendlog(room, targetType, target, content) {
 	if(targetType == 'room') {
 		io.to(room).emit('server-sendLog', content);
 	} else if(targetType == 'team') {
-		//WIP
+		for (let i = 0; i < roomList[room].partyciPlayer.length; i++) {
+			if (roomList[room].partyciPlayer[i].team === target) {
+				io.to(roomList[room].partyciPlayer[i]).emit('server-sendLog', content);
+			}
+		}
 	} else if(targetType == 'person') {
 		io.to(target).emit('server-sendLog', content);
 	}
@@ -429,6 +441,10 @@ async function dayEndFunc(target) {
 				}
 				target.player[temp1[0]].alive = 'DEAD';
 			}
+
+			for (let i = 0; i < Participate.length; i++) {
+				target.player[Participate[i]].gainedBallot = 0;
+			}
 		}
 		inner().then(function () {
 			nightFunc(target)
@@ -450,7 +466,7 @@ async function nightFunc(target) {
 		sendlog(target.roomName, 'room', null, '밤이 되었습니다.');
 		io.to(target.roomName).emit('server-sendGameUpdate', target);
 		io.to(target.roomName).emit('server-sendNight');
-		timer(120, target.roomName).then(function () {
+		timer(60, target.roomName).then(function () {
 			nightEndFunc(target)
 		});
 	} else {
@@ -469,6 +485,50 @@ async function nightEndFunc(target) {
 	) {
 		var inner = async function () {
 			io.to(target.roomName).emit('server-sendGameUpdate', target);
+			let nowAction;
+			let temp1 = [];
+			let deadVoted = 0;
+			for (let i = 0; i < target.partyciPlayer.length; i++) {
+				nowAction = target.player[target.partyciPlayer[i]];
+				if (nowAction.gainedBallot > deadVoted) {
+					deadVoted = nowAction.gainedBallot;
+				}
+			}
+		
+			for(let i = 0; i < target.partyciPlayer.length; i++) {
+				nowAction = target.player[target.partyciPlayer[i]];
+				if(nowAction.gainedBallot == deadVoted) {
+					temp1.push(nowAction.id);
+				}
+			}
+
+			console.log(temp1);
+			if (temp1.length != 1) {
+				sendlog(target.roomName, 'room', null, `${'아무도 죽지 않았습니다.'}`);
+			} else {
+				sendlog(target.roomName, 'room', null, `${temp1[0]}이 마피아의 공격을 받았습니다.`);
+				target.player[temp1[0]].alive = 'DEAD';
+			}
+
+			for (let i = 0; i < target.partyciPlayer.length; i++) {
+				nowAction = target.player[target.partyciPlayer[i]];
+
+				if (nowAction.job == 'police') {
+					if (target.player[nowAction.action].team == 'A') {
+						sendlog(target.roomName, 'person', target.partyciPlayer[i], `${target.player[nowAction.action].nickname}은 마피아가 아닙니다.`);
+					} else {
+						sendlog(target.roomName, 'person', target.partyciPlayer[i], `${target.player[nowAction.action].nickname}은 마피아입니다.`);
+					}
+				} else if (nowAction.job == 'doctor') {
+					target.player[nowAction.action].alive = 'ALIVE';
+					if (nowAction.action == temp1[0]) {
+						sendlog(target.roomName, 'room', null, '의사가 살리는 데 성공했습니다.');
+					} else {
+						sendlog(target.roomName, 'room', null, '의사는 살리는 데 실패했습니다.');
+					}
+				}
+			}
+
 		}
 		inner().then(function () {
 			dayFunc(target)
@@ -496,4 +556,6 @@ function gameEnd(target) {
 	io.to(target.roomName).emit('server-sendGameEnd', target);
 	console.log('My Work Is Done.');
 }
+
+
 //이것은 아무 의미없는 주석

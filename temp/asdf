@@ -15,12 +15,12 @@ room = {
 };
 
 
-player = 
-{
+player = {
     "id": socket.id,
     "nickname": ownerName,
-    "alive": "observer", //"ALIVE / DEAD / observer / wait",
+    "alive": "wait", //"ALIVE / DEAD / observer",
     "job": undefined, //"mafia / police / doctor / citizen",
     "team": undefined, //"A / B"
-    "gainedBallot": 0 //0
+    "gainedBallot": 0, //0
+    "action": null
 }

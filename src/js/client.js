@@ -357,7 +357,8 @@ function vote(target) {
 }
 
 function kill(target) {
-	socket.emit('client-sendMafiaAction', [currentRoom, target]);
+	socket.emit('client-sendMafiaAction', [currentRoom, currentVoted, target]);
+	currentVoted = target;
 }
 
 function investigate(target) {
