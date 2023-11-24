@@ -136,10 +136,15 @@ io.on("connection", (socket) => {
 				if (socket.id == Object.keys(roomList[Object.keys(roomList)[i]].player)[j]) {
 					sendlog(Object.keys(roomList)[i], 'room', null, `${roomList[Object.keys(roomList)[i]].player[socket.id].nickname}님의 접속이 끊겼습니다.(${reason})`);
 					delete roomList[Object.keys(roomList)[i]].player[socket.id];
-
+					console.log(Object.keys(roomList[Object.keys(roomList)[i]].player));
+					if (Object.keys(roomList[Object.keys(roomList)[i]].player).length == 0) {
+						delete roomList[Object.keys(roomList)[i]];
+						io.emit("server-sendRoomList", roomList);
+						break;
+					} else {
+						io.to(Object.keys(roomList)[i]).emit('server-sendGameUpdate', roomList[Object.keys(roomList)[i]]);
+					}
 					io.emit("server-sendRoomList", roomList);
-					io.to(Object.keys(roomList)[i]).emit('server-sendGameUpdate', roomList[Object.keys(roomList)[i]]);
-					
 				}
 			}
 		}
@@ -252,7 +257,7 @@ io.on("connection", (socket) => {
 		console.log(data);
 
 		if(roomList[data[0]].player[voted] !== undefined) {
-			room.player[voted].gainedBallot--;
+			room.player[voted].gainedBallot++;
 		} else {
 			
 		}
@@ -445,6 +450,7 @@ async function dayEndFunc(target) {
 			for (let i = 0; i < Participate.length; i++) {
 				target.player[Participate[i]].gainedBallot = 0;
 			}
+			console.log(target.player);
 		}
 		inner().then(function () {
 			nightFunc(target)
@@ -492,6 +498,8 @@ async function nightEndFunc(target) {
 				nowAction = target.player[target.partyciPlayer[i]];
 				if (nowAction.gainedBallot > deadVoted) {
 					deadVoted = nowAction.gainedBallot;
+					console.log(deadVoted);
+					console.log(nowAction.gainedBallot);
 				}
 			}
 		
@@ -499,6 +507,7 @@ async function nightEndFunc(target) {
 				nowAction = target.player[target.partyciPlayer[i]];
 				if(nowAction.gainedBallot == deadVoted) {
 					temp1.push(nowAction.id);
+
 				}
 			}
 
@@ -509,23 +518,30 @@ async function nightEndFunc(target) {
 				sendlog(target.roomName, 'room', null, `${temp1[0]}이 마피아의 공격을 받았습니다.`);
 				target.player[temp1[0]].alive = 'DEAD';
 			}
+			temp1 = [];
 
 			for (let i = 0; i < target.partyciPlayer.length; i++) {
 				nowAction = target.player[target.partyciPlayer[i]];
 
 				if (nowAction.job == 'police') {
-					if (target.player[nowAction.action].team == 'A') {
-						sendlog(target.roomName, 'person', target.partyciPlayer[i], `${target.player[nowAction.action].nickname}은 마피아가 아닙니다.`);
-					} else {
-						sendlog(target.roomName, 'person', target.partyciPlayer[i], `${target.player[nowAction.action].nickname}은 마피아입니다.`);
+					if (target.player[nowAction.action] != undefined) {
+						if (target.player[nowAction.action].team == 'A') {
+							sendlog(target.roomName, 'person', target.partyciPlayer[i], `${target.player[nowAction.action].nickname}은 마피아가 아닙니다.`);
+						} else {
+							sendlog(target.roomName, 'person', target.partyciPlayer[i], `${target.player[nowAction.action].nickname}은 마피아입니다.`);
+						}
 					}
 				} else if (nowAction.job == 'doctor') {
-					target.player[nowAction.action].alive = 'ALIVE';
-					if (nowAction.action == temp1[0]) {
-						sendlog(target.roomName, 'room', null, '의사가 살리는 데 성공했습니다.');
-					} else {
-						sendlog(target.roomName, 'room', null, '의사는 살리는 데 실패했습니다.');
+					
+					if (target.player[nowAction.action] != undefined) {
+						target.player[nowAction.action].alive = 'ALIVE';
+						if (nowAction.action == temp1[0]) {
+							sendlog(target.roomName, 'room', null, '의사가 살리는 데 성공했습니다.');
+						} else {
+							sendlog(target.roomName, 'room', null, '의사는 살리는 데 실패했습니다.');
+						}
 					}
+					
 				}
 			}
 
@@ -554,7 +570,6 @@ function gameEnd(target) {
 	}
 	io.to(target.roomName).emit('server-sendGameUpdate', target);
 	io.to(target.roomName).emit('server-sendGameEnd', target);
-	console.log('My Work Is Done.');
 }
 
 

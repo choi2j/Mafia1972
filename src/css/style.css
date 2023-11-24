@@ -219,6 +219,7 @@ input {
 
 #game-user .none *,
 #game-user .none {
+    display: none;
     background: none;
     color: transparent;
 }

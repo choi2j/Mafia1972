@@ -185,6 +185,21 @@ function makeRoom() {
 	let password = document.getElementById("mkroomPassword").value;
 	let ownerName = document.getElementById("mkownerName").value;
 
+	console.log(roomName);
+	console.log(password);
+	console.log(ownerName);
+
+	if (roomName == '') {
+		alert('방 이름을 설정하세요.');
+		return false;
+	} else if (password == '') {
+		alert('비밀번호를 설정하세요.');
+		return false;
+	} else if (ownerName == '') {
+		alert('닉네임을 설정하세요.');
+		return false;
+	}
+
 	let sendData = [roomName, password, ownerName];
 	currentRoom = roomName;
 	currentUserName = ownerName;
