@@ -7,6 +7,7 @@ let isOwner;
 let roomData;
 let currentVoted;
 let currentAlive;
+let currentTime;
 
 socket.on("screen-init", () => {
 	screenChange("mkroom", "room");
@@ -52,6 +53,8 @@ socket.on("server-sendRoomList", (data) => {
 });
 
 socket.on("server-sendJoinRoomOK", (data) => {
+	document.querySelector('#logContent').innerHTML = '';
+	
 	screenChange("game", "chat");
 
 	gameTopUpdate(data);
@@ -97,30 +100,30 @@ socket.on("server-sendYouAreOwner", () => {
 });
 
 socket.on('server-sendNight', () => {
+	currentTime = 'Night';
 	if (currentJob != 'mafia') {
 		document.getElementById('chatForm').style.display = 'none';
 	}
 
 	if (currentAlive == 'ALIVE') {
+		for (let i = 0; i < roomData.partyciPlayer.length; i++) {
+			if (roomData.player[roomData.partyciPlayer[i]].alive == 'ALIVE')
+			document.getElementsByClassName('vote')[i].style.display = 'flex';
+		}
+	}
+
+
+	if (currentAlive == 'ALIVE') {
 		if (currentJob == 'mafia') {
 			for (let i = 0; i < document.getElementsByClassName('vote').length; i++) {
-				document.getElementsByClassName('vote')[i].addEventListener("click", () => {
-					kill(`${document.getElementsByClassName('vote')[i].id}`);
-				});
-				document.getElementsByClassName('vote')[i].innerHTML = 'kill'
+				document.getElementsByClassName('vote')[i].innerHTML = 'kill';
 			}
 		} else if (currentJob == 'police') {
 			for (let i = 0; i < document.getElementsByClassName('vote').length; i++) {
-				document.getElementsByClassName('vote')[i].addEventListener("click", () => {
-					investigate(`${document.getElementsByClassName('vote')[i].id}`);
-				});
 				document.getElementsByClassName('vote')[i].innerHTML = 'investigate';
 			}
 		} else if (currentJob == 'doctor') {
 			for (let i = 0; i < document.getElementsByClassName('vote').length; i++) {
-				document.getElementsByClassName('vote')[i].addEventListener("click", () => {
-					cure(`${document.getElementsByClassName('vote')[i].id}`);
-				});
 				document.getElementsByClassName('vote')[i].innerHTML = 'cure';
 			}
 		} else if (currentJob == 'citizen') {
@@ -137,21 +140,20 @@ socket.on('server-sendNight', () => {
 })
 
 socket.on('server-sendDay', () => {
+	currentTime = 'Day';
 	document.getElementById('chatForm').style.display = 'flex';
 	if (currentAlive == 'ALIVE') {
 		for (let i = 0; i < roomData.partyciPlayer.length; i++) {
 			if (roomData.player[roomData.partyciPlayer[i]].alive == 'ALIVE')
 			document.getElementsByClassName('vote')[i].style.display = 'flex';
-			document.getElementsByClassName('vote')[i].addEventListener("click", () => {
-				vote(`${document.getElementsByClassName('vote')[i].id}`);
-			});
-				document.getElementsByClassName('vote')[i].innerHTML = 'vote';
+			document.getElementsByClassName('vote')[i].innerHTML = 'vote';
 		}
 	}
 })
 
 socket.on('server-sendTime', (data) => {
 	console.log(data);
+	document.querySelector('#leftTime').innerHTML = data;
 })
 
 socket.on('server-sendGameEnd', (data) => {
@@ -260,8 +262,8 @@ function sendChatting(data) {
 
 function gameTopUpdate(data) {
 	document.getElementById("roomName").innerHTML = data.roomName;
-	document.getElementById("time").innerHTML = data.time;
-	if (document.getElementById("time").innerHTML == "Not Start Yet" && isOwner != true) {
+	document.getElementById("time").innerHTML = `Day ${data.day}, ${data.time}`;
+	if (data.time == "Not Start Yet" && isOwner != true) {
 		let button = document.createElement("button");
 		button.id = "gameParticipate";
 		button.innerHTML = "Game Participate";
@@ -271,7 +273,7 @@ function gameTopUpdate(data) {
 
 		document.getElementById("time").innerHTML = "";
 		document.getElementById("time").appendChild(button);
-	} else if (document.getElementById("time").innerHTML == "Not Start Yet" && isOwner == true) {
+	} else if (data.time == "Not Start Yet" && isOwner == true) {
 		let button = document.createElement("button");
 		button.id = "gameStart";
 		button.innerHTML = "Game Start";
@@ -282,7 +284,7 @@ function gameTopUpdate(data) {
 		document.getElementById("time").innerHTML = "";
 		document.getElementById("time").appendChild(button);
 	}
-	document.getElementById("currentMafiaCount").innerHTML = data.alivePeople.teamB;
+	document.getElementById("currentMafiaCount").innerHTML = `Mafia:${data.alivePeople.teamB}`;
 }
 
 function gameUserUpdate(data) {
@@ -365,21 +367,54 @@ function gameChatUpdate(data) {
 	document.getElementById("chat-log").appendChild(li);
 }
 
+function action(target) {
+	if (currentTime == 'Day') {
+		vote(target);
+	} else {
+		if (currentJob == 'mafia') {
+			kill(target); 
+		} else if (currentJob == 'police') {
+			investigate(target);
+		} else if (currentJob == 'doctor') {
+			cure(target);
+		}
+	}
+}
+
+
 function vote(target) {
-	console.log(target);
-	socket.emit('client-sendVote', [currentRoom, currentVoted, target]);
+	console.log('v');
 	currentVoted = target;
+	socket.emit('client-sendVote', [currentRoom, currentVoted, target]);
+	buttons = document.querySelectorAll('.vote');
+	for (let i = 0; i < buttons.length; i++) {
+		buttons[i].style.display = 'none';
+	}
 }
 
 function kill(target) {
-	socket.emit('client-sendMafiaAction', [currentRoom, currentVoted, target]);
+	console.log('k')
 	currentVoted = target;
+	socket.emit('client-sendMafiaAction', [currentRoom, currentVoted, target]);
+	buttons = document.querySelectorAll('.vote');
+	for (let i = 0; i < buttons.length; i++) {
+		buttons[i].style.display = 'none';
+	}
 }
 
 function investigate(target) {
+	console.log('i')
 	socket.emit('client-sendPoliceAction', [currentRoom, target]);
+	buttons = document.querySelectorAll('.vote');
+	for (let i = 0; i < buttons.length; i++) {
+		buttons[i].style.display = 'none';
+	}
 }
 
 function cure(target) {
 	socket.emit('client-sendDoctorAction', [currentRoom, target]);
+	buttons = document.querySelectorAll('.vote');
+	for (let i = 0; i < buttons.length; i++) {
+		buttons[i].style.display = 'none';
+	}
 }

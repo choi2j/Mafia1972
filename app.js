@@ -136,7 +136,6 @@ io.on("connection", (socket) => {
 				if (socket.id == Object.keys(roomList[Object.keys(roomList)[i]].player)[j]) {
 					sendlog(Object.keys(roomList)[i], 'room', null, `${roomList[Object.keys(roomList)[i]].player[socket.id].nickname}님의 접속이 끊겼습니다.(${reason})`);
 					delete roomList[Object.keys(roomList)[i]].player[socket.id];
-					console.log(Object.keys(roomList[Object.keys(roomList)[i]].player));
 					if (Object.keys(roomList[Object.keys(roomList)[i]].player).length == 0) {
 						delete roomList[Object.keys(roomList)[i]];
 						io.emit("server-sendRoomList", roomList);
@@ -241,20 +240,17 @@ io.on("connection", (socket) => {
 		let room = roomList[data[0]];
 		let voted = data[1];
 		let target = data[2];
-
-		if(roomList[data[0]].player[voted] !== undefined) {
-			room.player[voted].gainedBallot--;
-		} else {
-			
-		}
+		console.log(`${socket.id} voted`);
+		console.log([243, room.player[target].gainedBallot])
 		room.player[target].gainedBallot++;
+		console.log([245, room.player[target].gainedBallot])
 	})
 
 	socket.on('client-sendMafiaAction', (data) => { //WIP
+		console.log('1');
 		let room = roomList[data[0]];
 		let voted = data[1];
 		let target = data[2];
-		console.log(data);
 
 		if(roomList[data[0]].player[voted] !== undefined) {
 			room.player[voted].gainedBallot++;
@@ -422,7 +418,9 @@ async function dayEndFunc(target) {
 			let Participate = target.partyciPlayer;
 			target.time = 'night';
 			for (let i = 0; i < Participate.length; i++) {
+				console.log([target.player[Participate[i]].nickname, target.player[Participate[i]].gainedBallot])
 				if (deadVoted < target.player[Participate[i]].gainedBallot) {
+					console.log(target.player[Participate[i]])
 					deadVoted = target.player[Participate[i]].gainedBallot;
 				}
 			}
@@ -449,8 +447,9 @@ async function dayEndFunc(target) {
 
 			for (let i = 0; i < Participate.length; i++) {
 				target.player[Participate[i]].gainedBallot = 0;
+				console.log([target.player[Participate[i]].nickname, target.player[Participate[i]].gainedBallot])
 			}
-			console.log(target.player);
+			
 		}
 		inner().then(function () {
 			nightFunc(target)
@@ -472,7 +471,7 @@ async function nightFunc(target) {
 		sendlog(target.roomName, 'room', null, '밤이 되었습니다.');
 		io.to(target.roomName).emit('server-sendGameUpdate', target);
 		io.to(target.roomName).emit('server-sendNight');
-		timer(60, target.roomName).then(function () {
+		timer(30, target.roomName).then(function () {
 			nightEndFunc(target)
 		});
 	} else {
@@ -490,33 +489,37 @@ async function nightEndFunc(target) {
 		target.alivePeople.teamB > 0
 	) {
 		var inner = async function () {
+			
+			target.time = 'day';
 			io.to(target.roomName).emit('server-sendGameUpdate', target);
 			let nowAction;
 			let temp1 = [];
 			let deadVoted = 0;
+
 			for (let i = 0; i < target.partyciPlayer.length; i++) {
-				nowAction = target.player[target.partyciPlayer[i]];
-				if (nowAction.gainedBallot > deadVoted) {
-					deadVoted = nowAction.gainedBallot;
-					console.log(deadVoted);
-					console.log(nowAction.gainedBallot);
+				if (deadVoted < target.player[target.partyciPlayer[i]].gainedBallot) {
+					deadVoted = target.player[target.partyciPlayer[i]].gainedBallot;
 				}
 			}
-		
+
 			for(let i = 0; i < target.partyciPlayer.length; i++) {
-				nowAction = target.player[target.partyciPlayer[i]];
-				if(nowAction.gainedBallot == deadVoted) {
-					temp1.push(nowAction.id);
-
+				if(target.player[target.partyciPlayer[i]].gainedBallot == deadVoted) {
+					temp1.push(target.player[target.partyciPlayer[i]].id);
 				}
 			}
-
-			console.log(temp1);
 			if (temp1.length != 1) {
 				sendlog(target.roomName, 'room', null, `${'아무도 죽지 않았습니다.'}`);
 			} else {
-				sendlog(target.roomName, 'room', null, `${temp1[0]}이 마피아의 공격을 받았습니다.`);
+				sendlog(target.roomName, 'room', null, `${temp1[0].nickname}이 마피아의 공격을 받았습니다.`);
 				target.player[temp1[0]].alive = 'DEAD';
+				if (target.player[temp1[0]].team == 'A') {
+					target.alivePeople.teamA--;
+				} else if (target.player[temp1[0]].team == 'B') {
+					target.alivePeople.teamB--;
+				}
+			}
+			for (let i = 0; i < target.partyciPlayer.length; i++) {
+				target.player[target.partyciPlayer[i]].gainedBallot = 0;
 			}
 			temp1 = [];
 
@@ -547,6 +550,7 @@ async function nightEndFunc(target) {
 
 		}
 		inner().then(function () {
+			target.day++;
 			dayFunc(target)
 		} );
 	} else {
