@@ -393,10 +393,14 @@ async function dayFunc (target) {
 		io.to(target.roomName).emit('server-sendDay');
 		sendlog(target.roomName, 'room', null, '낮이 되었습니다.');
 		timer(20, target.roomName).then(function () {
-			dayEndFunc(target)
+			if (target != undefined) {
+				dayEndFunc(target)
+			}
 		});
 	} else {
-		gameEnd(target);
+		if (target != undefined) {
+			gameEnd(target);
+		}
 	}
 }
 
@@ -434,6 +438,7 @@ async function dayEndFunc(target) {
 			if (temp1.length > 1) {
 				sendlog(target.roomName, 'room', null, '아무도 죽지 않았습니다 : 득표수 같음');
 			} else {
+				console.log(target.player[temp1[0]]);
 				sendlog(target.roomName, 'room', null, `${target.player[temp1[0]].nickname}이 투표로 죽었습니다.`);
 				if (target.player[temp1[0]].team == 'A') {
 					sendlog(target.roomName, 'room', null, `${target.player[temp1[0]].nickname}은 마피아가 아니었습니다.`);
@@ -452,10 +457,14 @@ async function dayEndFunc(target) {
 			
 		}
 		inner().then(function () {
-			nightFunc(target)
+			if (target != undefined) {
+				nightFunc(target)
+			}
 		});
 	} else {
-		gameEnd(target);
+		if (target != undefined) {
+			gameEnd(target);
+		}
 	}
 }
 
@@ -472,10 +481,14 @@ async function nightFunc(target) {
 		io.to(target.roomName).emit('server-sendGameUpdate', target);
 		io.to(target.roomName).emit('server-sendNight');
 		timer(30, target.roomName).then(function () {
-			nightEndFunc(target)
+			if (target != undefined) {
+				nightEndFunc(target)
+			}
 		});
 	} else {
-		gameEnd(target);
+		if (target != undefined) {
+			gameEnd(target);
+		}
 	}
 }
 
@@ -507,10 +520,11 @@ async function nightEndFunc(target) {
 					temp1.push(target.player[target.partyciPlayer[i]].id);
 				}
 			}
+
 			if (temp1.length != 1) {
 				sendlog(target.roomName, 'room', null, `${'아무도 죽지 않았습니다.'}`);
 			} else {
-				sendlog(target.roomName, 'room', null, `${temp1[0].nickname}이 마피아의 공격을 받았습니다.`);
+				sendlog(target.roomName, 'room', null, `${target.player[temp1[0]].nickname}이 마피아의 공격을 받았습니다.`);
 				target.player[temp1[0]].alive = 'DEAD';
 				if (target.player[temp1[0]].team == 'A') {
 					target.alivePeople.teamA--;
@@ -521,7 +535,6 @@ async function nightEndFunc(target) {
 			for (let i = 0; i < target.partyciPlayer.length; i++) {
 				target.player[target.partyciPlayer[i]].gainedBallot = 0;
 			}
-			temp1 = [];
 
 			for (let i = 0; i < target.partyciPlayer.length; i++) {
 				nowAction = target.player[target.partyciPlayer[i]];
@@ -535,26 +548,38 @@ async function nightEndFunc(target) {
 						}
 					}
 				} else if (nowAction.job == 'doctor') {
-					
+					console.log([nowAction.action, temp1[0]])
 					if (target.player[nowAction.action] != undefined) {
-						target.player[nowAction.action].alive = 'ALIVE';
 						if (nowAction.action == temp1[0]) {
 							sendlog(target.roomName, 'room', null, '의사가 살리는 데 성공했습니다.');
+							target.player[nowAction.action].alive = 'ALIVE';
+							if (target.player[temp1[0]].team == 'A') {
+								target.alivePeople.teamA++;
+							} else if (target.player[temp1[0]].team == 'B') {
+								target.alivePeople.teamB++;
+							}
 						} else {
 							sendlog(target.roomName, 'room', null, '의사는 살리는 데 실패했습니다.');
 						}
 					}
 					
 				}
+				
+				nowAction = null;
 			}
+			temp1 = [];
 
 		}
 		inner().then(function () {
-			target.day++;
-			dayFunc(target)
+			if (target != undefined) {
+				target.day++;
+				dayFunc(target)
+			}
 		} );
 	} else {
-		gameEnd(target);
+		if (target != undefined) {
+			gameEnd(target);
+		}
 	}
 }
 
@@ -569,9 +594,15 @@ function gameEnd(target) {
 	} else if (target.alivePeople.teamA <= target.alivePeople.teamB) {
 		sendlog(target.roomName, 'room', null, '마피아 승리 : 시민의 수와 마피아의 수가 같아졌습니다.');
 	}
+	console.log(target);
 	for (let i = 0; i < target.partyciPlayer.length; i++) {
-		target.player[target.partyciPlayer[i]].alive = 'observer';
+		if (target.player[target.partyciPlayer[i]].nickname == target.ownerName) {
+		target.player[target.partyciPlayer[i]].alive = 'wait';
+		} else {
+			target.player[target.partyciPlayer[i]].alive = 'observer';
+		}
 	}
+	target.time = "Not Start Yet";
 	io.to(target.roomName).emit('server-sendGameUpdate', target);
 	io.to(target.roomName).emit('server-sendGameEnd', target);
 }

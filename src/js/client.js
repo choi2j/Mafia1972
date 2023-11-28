@@ -54,6 +54,9 @@ socket.on("server-sendRoomList", (data) => {
 
 socket.on("server-sendJoinRoomOK", (data) => {
 	document.querySelector('#logContent').innerHTML = '';
+	for (let i = 0; i < document.getElementsByClassName('vote').length; i++) {
+		document.getElementsByClassName('vote')[i].style.display = 'none';
+	}
 	
 	screenChange("game", "chat");
 
@@ -107,8 +110,9 @@ socket.on('server-sendNight', () => {
 
 	if (currentAlive == 'ALIVE') {
 		for (let i = 0; i < roomData.partyciPlayer.length; i++) {
-			if (roomData.player[roomData.partyciPlayer[i]].alive == 'ALIVE')
-			document.getElementsByClassName('vote')[i].style.display = 'flex';
+			if (roomData.player[roomData.partyciPlayer[i]].alive == 'ALIVE') {
+				document.getElementsByClassName('vote')[i].style.display = 'flex';
+			}
 		}
 	}
 
@@ -144,9 +148,10 @@ socket.on('server-sendDay', () => {
 	document.getElementById('chatForm').style.display = 'flex';
 	if (currentAlive == 'ALIVE') {
 		for (let i = 0; i < roomData.partyciPlayer.length; i++) {
-			if (roomData.player[roomData.partyciPlayer[i]].alive == 'ALIVE')
-			document.getElementsByClassName('vote')[i].style.display = 'flex';
-			document.getElementsByClassName('vote')[i].innerHTML = 'vote';
+			if (roomData.player[roomData.partyciPlayer[i]].alive == 'ALIVE') {
+				document.getElementsByClassName('vote')[i].style.display = 'flex';
+				document.getElementsByClassName('vote')[i].innerHTML = 'vote';
+			}
 		}
 	}
 })
@@ -157,8 +162,8 @@ socket.on('server-sendTime', (data) => {
 })
 
 socket.on('server-sendGameEnd', (data) => {
-	for (let i = 0; i < document.querySelector('.vote').length; i++) {
-		document.querySelector('.vote').style.display = 'none';
+	for (let i = 0; i < document.querySelectorAll('.vote').length; i++) {
+		document.querySelectorAll('.vote')[i].style.display = 'none';
 	}
 })
 
