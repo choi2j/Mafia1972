@@ -240,14 +240,10 @@ io.on("connection", (socket) => {
 		let room = roomList[data[0]];
 		let voted = data[1];
 		let target = data[2];
-		console.log(`${socket.id} voted`);
-		console.log([243, room.player[target].gainedBallot])
 		room.player[target].gainedBallot++;
-		console.log([245, room.player[target].gainedBallot])
 	})
 
-	socket.on('client-sendMafiaAction', (data) => { //WIP
-		console.log('1');
+	socket.on('client-sendMafiaAction', (data) => {
 		let room = roomList[data[0]];
 		let voted = data[1];
 		let target = data[2];
@@ -260,7 +256,7 @@ io.on("connection", (socket) => {
 		room.player[target].gainedBallot++;
 	});
 	
-	socket.on('client-sendPoliceAction', (data) => { //WIP
+	socket.on('client-sendPoliceAction', (data) => {
 		let roomName = data[0];
 		let target = data[1];
 
@@ -422,9 +418,7 @@ async function dayEndFunc(target) {
 			let Participate = target.partyciPlayer;
 			target.time = 'night';
 			for (let i = 0; i < Participate.length; i++) {
-				console.log([target.player[Participate[i]].nickname, target.player[Participate[i]].gainedBallot])
 				if (deadVoted < target.player[Participate[i]].gainedBallot) {
-					console.log(target.player[Participate[i]])
 					deadVoted = target.player[Participate[i]].gainedBallot;
 				}
 			}
@@ -438,7 +432,6 @@ async function dayEndFunc(target) {
 			if (temp1.length > 1) {
 				sendlog(target.roomName, 'room', null, '아무도 죽지 않았습니다 : 득표수 같음');
 			} else {
-				console.log(target.player[temp1[0]]);
 				sendlog(target.roomName, 'room', null, `${target.player[temp1[0]].nickname}이 투표로 죽었습니다.`);
 				if (target.player[temp1[0]].team == 'A') {
 					sendlog(target.roomName, 'room', null, `${target.player[temp1[0]].nickname}은 마피아가 아니었습니다.`);
@@ -452,7 +445,6 @@ async function dayEndFunc(target) {
 
 			for (let i = 0; i < Participate.length; i++) {
 				target.player[Participate[i]].gainedBallot = 0;
-				console.log([target.player[Participate[i]].nickname, target.player[Participate[i]].gainedBallot])
 			}
 			
 		}
@@ -548,7 +540,6 @@ async function nightEndFunc(target) {
 						}
 					}
 				} else if (nowAction.job == 'doctor') {
-					console.log([nowAction.action, temp1[0]])
 					if (target.player[nowAction.action] != undefined) {
 						if (nowAction.action == temp1[0]) {
 							sendlog(target.roomName, 'room', null, '의사가 살리는 데 성공했습니다.');
@@ -594,7 +585,6 @@ function gameEnd(target) {
 	} else if (target.alivePeople.teamA <= target.alivePeople.teamB) {
 		sendlog(target.roomName, 'room', null, '마피아 승리 : 시민의 수와 마피아의 수가 같아졌습니다.');
 	}
-	console.log(target);
 	for (let i = 0; i < target.partyciPlayer.length; i++) {
 		if (target.player[target.partyciPlayer[i]].nickname == target.ownerName) {
 		target.player[target.partyciPlayer[i]].alive = 'wait';

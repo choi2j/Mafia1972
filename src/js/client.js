@@ -14,16 +14,12 @@ socket.on("screen-init", () => {
 });
 
 socket.on("server-sendRoomList", (data) => {
-	console.log(data);
-	console.log(Object.keys(data).length);
 	document.getElementsByClassName("room-list")[0].innerHTML = "";
 
 	let li, Name, Owner, People;
 	let key;
 	for (let i = 0; i < Object.keys(data).length; i++) {
 		key = Object.keys(data)[i];
-
-		console.log("data[key]: ", data[key]);
 
 		li = document.createElement("li");
 		li.className = "room-item";
@@ -157,7 +153,6 @@ socket.on('server-sendDay', () => {
 })
 
 socket.on('server-sendTime', (data) => {
-	console.log(data);
 	document.querySelector('#leftTime').innerHTML = data;
 })
 
@@ -191,10 +186,6 @@ function makeRoom() {
 	let roomName = document.getElementById("mkroomName").value;
 	let password = document.getElementById("mkroomPassword").value;
 	let ownerName = document.getElementById("mkownerName").value;
-
-	console.log(roomName);
-	console.log(password);
-	console.log(ownerName);
 
 	if (roomName == '') {
 		alert('방 이름을 설정하세요.');
@@ -388,7 +379,6 @@ function action(target) {
 
 
 function vote(target) {
-	console.log('v');
 	currentVoted = target;
 	socket.emit('client-sendVote', [currentRoom, currentVoted, target]);
 	buttons = document.querySelectorAll('.vote');
@@ -398,7 +388,6 @@ function vote(target) {
 }
 
 function kill(target) {
-	console.log('k')
 	currentVoted = target;
 	socket.emit('client-sendMafiaAction', [currentRoom, currentVoted, target]);
 	buttons = document.querySelectorAll('.vote');
@@ -408,7 +397,6 @@ function kill(target) {
 }
 
 function investigate(target) {
-	console.log('i')
 	socket.emit('client-sendPoliceAction', [currentRoom, target]);
 	buttons = document.querySelectorAll('.vote');
 	for (let i = 0; i < buttons.length; i++) {
